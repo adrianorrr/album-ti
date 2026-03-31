@@ -273,9 +273,7 @@ function renderPhotoFrame(person, leader = false) {
 
   return `
     <div class="${frameClass}">
-      <div class="photo-placeholder">
-        <strong>Colar figurinha</strong>
-      </div>
+      <div class="photo-placeholder" aria-hidden="true"></div>
     </div>
   `;
 }
