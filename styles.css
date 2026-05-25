@@ -11,10 +11,11 @@
   --accent: #d64545;
   --teal: #5bd0c7;
   --line: rgba(22, 38, 58, 0.12);
-  --page-width: 32rem;
-  --page-height: 45rem;
-  --book-depth: 1.2rem;
-  --transition: 900ms cubic-bezier(0.2, 0.7, 0.15, 1);
+  --page-ratio: 1.40625;
+  --page-width: min(94vw, 22rem, calc((100dvh - 9.6rem) / var(--page-ratio)));
+  --page-height: calc(var(--page-width) * var(--page-ratio));
+  --book-depth: 0.75rem;
+  --transition: 720ms cubic-bezier(0.2, 0.7, 0.15, 1);
   --shadow-deep: 0 2rem 5rem rgba(0, 0, 0, 0.34);
   --shadow-soft: 0 1rem 2.5rem rgba(0, 0, 0, 0.18);
 }
@@ -36,7 +37,7 @@ body {
     radial-gradient(circle at bottom right, rgba(244, 201, 93, 0.12), transparent 28%),
     linear-gradient(145deg, #08131f, #12263b 52%, #08131f);
   color: var(--cream);
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 body::before {
@@ -58,11 +59,11 @@ input {
 
 .scene-glow {
   position: fixed;
-  width: 24rem;
-  height: 24rem;
+  width: 14rem;
+  height: 14rem;
   border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0.28;
+  filter: blur(32px);
+  opacity: 0.2;
   pointer-events: none;
 }
 
@@ -79,32 +80,62 @@ input {
 }
 
 .experience {
-  min-height: 100vh;
-  padding: 2rem;
+  height: 100dvh;
+  min-height: 0;
+  padding: clamp(0.45rem, 2.6vw, 0.85rem);
   display: grid;
   place-items: center;
+  overflow: hidden;
+}
+
+.stage-shell {
+  position: relative;
+  width: 100%;
+  height: calc(100dvh - clamp(0.9rem, 5.2vw, 1.7rem));
+  min-width: 0;
 }
 
 .cover-stage,
 .album-stage {
-  width: min(100%, 96rem);
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: clamp(0.5rem, 2.3vw, 0.85rem);
+  border-radius: 1.25rem;
+  overflow: hidden;
+  transition: opacity 320ms ease, transform 320ms ease, visibility 320ms ease;
 }
 
 .is-hidden {
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(1rem) scale(0.985);
 }
 
 .cover-stage {
   display: grid;
   place-items: center;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.04), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 2rem 5rem rgba(0, 0, 0, 0.22);
 }
 
 .cover-card {
   position: relative;
-  width: min(100%, 34rem);
-  min-height: 48rem;
-  padding: 1.8rem;
-  border-radius: 1.9rem;
+  width: min(100%, 26rem, calc((100dvh - 1.5rem) * 17 / 24));
+  height: auto;
+  max-height: 100%;
+  min-height: 0;
+  aspect-ratio: 17 / 24;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: clamp(0.85rem, 3.6vw, 1.2rem);
+  border-radius: 1.25rem;
   background:
     linear-gradient(160deg, rgba(255, 255, 255, 0.12), transparent 30%),
     linear-gradient(180deg, #116a60, #0b4f4a 48%, #082f38);
@@ -112,13 +143,13 @@ input {
     0 1.2rem 4rem rgba(0, 0, 0, 0.44),
     inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   overflow: hidden;
-  transform: rotate(-2.2deg);
+  transform: none;
   transition: transform 500ms ease, box-shadow 500ms ease;
   cursor: pointer;
 }
 
 .cover-card:hover {
-  transform: rotate(-1deg) translateY(-0.35rem);
+  transform: translateY(-0.15rem);
   box-shadow:
     0 1.6rem 4.6rem rgba(0, 0, 0, 0.48),
     inset 0 0 0 1px rgba(255, 255, 255, 0.12);
@@ -126,6 +157,7 @@ input {
 
 .cover-card:focus-visible,
 .primary-action:focus-visible,
+.album-back:focus-visible,
 .nav-button:focus-visible,
 .dot:focus-visible {
   outline: 0.2rem solid rgba(244, 201, 93, 0.92);
@@ -143,9 +175,13 @@ input {
 }
 
 .cover-card::after {
-  inset: 1.95rem;
+  inset: 1.2rem;
   border-style: dashed;
   opacity: 0.5;
+}
+
+.cover-card::before {
+  inset: 0.75rem;
 }
 
 .cover-noise {
@@ -168,25 +204,26 @@ input {
 .cover-header {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  font-size: 0.78rem;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.62rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .cover-badge,
 .cover-year {
-  padding: 0.45rem 0.8rem;
+  padding: 0.35rem 0.55rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .cover-body {
-  min-height: 37rem;
+  min-height: 0;
   display: grid;
   align-content: center;
-  gap: 1rem;
+  gap: 0.55rem;
   text-align: center;
 }
 
@@ -206,29 +243,30 @@ input {
 .eyebrow {
   margin: 0;
   color: rgba(246, 239, 223, 0.74);
-  font-size: 0.86rem;
+  font-size: 0.72rem;
 }
 
 .cover-body h1 {
   margin: 0;
   font-family: "Bebas Neue", sans-serif;
-  font-size: clamp(4rem, 7vw, 6.2rem);
+  font-size: clamp(3rem, 14vw, 4.2rem);
   letter-spacing: 0.06em;
   line-height: 0.92;
 }
 
 .cover-copy {
-  width: min(26rem, 100%);
+  width: min(30rem, 100%);
   margin: 0 auto;
-  font-size: 1.03rem;
-  line-height: 1.7;
+  font-size: 0.84rem;
+  line-height: 1.45;
   color: rgba(246, 239, 223, 0.88);
+  text-wrap: balance;
 }
 
 .cover-emblem {
-  width: 12rem;
+  width: clamp(7rem, 32vw, 9rem);
   aspect-ratio: 1;
-  margin: 1rem auto;
+  margin: 0.45rem auto;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -237,7 +275,7 @@ input {
     radial-gradient(circle at top, rgba(244, 201, 93, 0.35), transparent 40%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.02)),
     #0c3846;
-  border: 0.4rem solid rgba(244, 201, 93, 0.72);
+  border: 0.28rem solid rgba(244, 201, 93, 0.72);
   box-shadow:
     inset 0 0 0 0.25rem rgba(255, 255, 255, 0.14),
     0 0.8rem 2rem rgba(0, 0, 0, 0.24);
@@ -247,13 +285,13 @@ input {
   position: relative;
   z-index: 2;
   font-family: "Bebas Neue", sans-serif;
-  font-size: 3.6rem;
+  font-size: clamp(2.4rem, 10vw, 3.2rem);
   color: var(--cream);
 }
 
 .emblem-ball {
   position: absolute;
-  width: 4.5rem;
+  width: clamp(3.1rem, 13vw, 3.8rem);
   aspect-ratio: 1;
   border-radius: 50%;
   background:
@@ -278,15 +316,15 @@ input {
 
 .emblem-star {
   position: absolute;
-  top: -0.85rem;
-  width: 1rem;
-  height: 1rem;
+  top: -0.62rem;
+  width: 0.72rem;
+  height: 0.72rem;
   clip-path: polygon(50% 0%, 62% 35%, 100% 35%, 69% 56%, 82% 100%, 50% 74%, 18% 100%, 31% 56%, 0% 35%, 38% 35%);
   background: var(--gold);
 }
 
 .emblem-star:nth-child(1) {
-  left: 2rem;
+  left: 1.45rem;
 }
 
 .emblem-star:nth-child(2) {
@@ -294,26 +332,27 @@ input {
 }
 
 .emblem-star:nth-child(3) {
-  right: 2rem;
+  right: 1.45rem;
 }
 
 .cover-ribbon {
   display: inline-flex;
-  gap: 0.65rem;
+  gap: 0.4rem;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .cover-ribbon span {
-  padding: 0.5rem 0.95rem;
+  padding: 0.38rem 0.55rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
 }
 
 .cover-footer {
   display: grid;
   justify-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .cover-footer p {
@@ -330,8 +369,9 @@ input {
 }
 
 .primary-action {
-  min-width: 12rem;
-  padding: 0.9rem 1.4rem;
+  width: min(100%, 13rem);
+  min-height: 2.75rem;
+  padding: 0.78rem 1.1rem;
   border-radius: 999px;
   background: linear-gradient(135deg, #ffe8a6, #f4c95d 58%, #d6a135);
   color: #1b2534;
@@ -341,48 +381,102 @@ input {
 
 .album-stage {
   display: grid;
-  gap: 1.5rem;
+  grid-template-rows: auto 1fr auto;
+  gap: 0.55rem;
+  align-content: stretch;
+  justify-items: stretch;
+  background:
+    radial-gradient(circle at 20% 12%, rgba(91, 208, 199, 0.08), transparent 26%),
+    radial-gradient(circle at 80% 18%, rgba(244, 201, 93, 0.08), transparent 24%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 2rem 5rem rgba(0, 0, 0, 0.22);
 }
 
 .topbar,
 .album-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+  display: grid;
   align-items: center;
 }
 
+.album-footer {
+  justify-items: center;
+}
+
+.topbar {
+  grid-template-columns: auto 1fr;
+  justify-items: stretch;
+  gap: 0.65rem;
+}
+
+.topbar::after {
+  content: none;
+}
+
 .topbar h2 {
-  margin: 0.25rem 0 0;
+  margin: 0.1rem 0 0;
   font-family: "Bebas Neue", sans-serif;
-  font-size: clamp(2rem, 3vw, 2.7rem);
+  font-size: clamp(1.55rem, 7vw, 2.05rem);
   letter-spacing: 0.05em;
 }
 
-.topbar-meta {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+.topbar-heading {
+  display: grid;
+  justify-items: start;
+  text-align: left;
 }
 
-.meta-pill {
-  padding: 0.55rem 0.85rem;
+.album-back {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.5rem;
+  padding: 0.56rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(246, 239, 223, 0.84);
+  color: rgba(246, 239, 223, 0.92);
+  cursor: pointer;
+  transition: transform 220ms ease, background 220ms ease, border-color 220ms ease;
+}
+
+.album-back:hover {
+  transform: translateY(-0.08rem);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.album-back span {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-left: 0.15rem solid currentColor;
+  border-bottom: 0.15rem solid currentColor;
+  transform: rotate(45deg);
+  margin-left: 0.12rem;
+}
+
+.album-back strong {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .album-shell {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr;
   align-items: center;
-  gap: 1rem;
+  justify-items: center;
+  gap: 0;
+  min-height: 0;
 }
 
 .nav-button {
-  width: 3.75rem;
-  height: 3.75rem;
+  display: none;
+  width: 3.15rem;
+  height: 3.15rem;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -420,28 +514,35 @@ input {
 
 .album-frame {
   position: relative;
+  width: 100%;
   display: grid;
   place-items: center;
-  min-height: calc(var(--page-height) + 4rem);
+  min-height: calc(var(--page-height) + 0.65rem);
+  padding-inline: 0.1rem;
+  overflow: visible;
   perspective: 2400px;
 }
 
 .album-shadow {
   position: absolute;
-  width: calc(var(--page-width) * 2.05);
-  height: 2.5rem;
-  bottom: 1.7rem;
+  width: calc(var(--page-width) * 1.05);
+  height: 1.4rem;
+  bottom: 0.25rem;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.45);
-  filter: blur(22px);
+  filter: blur(16px);
 }
 
 .book {
   position: relative;
-  width: calc(var(--page-width) * 2);
+  width: var(--page-width);
   height: var(--page-height);
   transform-style: preserve-3d;
   cursor: pointer;
+}
+
+.book.is-mobile {
+  width: var(--page-width);
 }
 
 .book::before {
@@ -472,13 +573,18 @@ input {
 .sheet {
   position: absolute;
   top: 0;
-  left: 50%;
+  left: 0;
   width: var(--page-width);
   height: var(--page-height);
   transform-origin: left center;
   transform-style: preserve-3d;
   transition: transform var(--transition), filter var(--transition);
   will-change: transform;
+}
+
+.mobile-sheet {
+  left: 0;
+  width: 100%;
 }
 
 .sheet.flipped {
@@ -492,16 +598,16 @@ input {
 .page {
   position: absolute;
   inset: 0;
-  padding: 1.45rem;
+  padding: 0.85rem;
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 0.55rem;
   color: var(--ink);
   background:
     radial-gradient(circle at top, rgba(255, 255, 255, 0.62), transparent 34%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.42), transparent 18%),
     linear-gradient(180deg, var(--cream), var(--paper));
-  border-radius: 0 1.1rem 1.1rem 0;
+  border-radius: 1rem;
   border: 1px solid rgba(88, 72, 40, 0.18);
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.45),
@@ -526,18 +632,18 @@ input {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.14), transparent 15%, transparent 88%, rgba(255, 255, 255, 0.2)),
-    repeating-linear-gradient(0deg, transparent 0 2.7rem, rgba(22, 38, 58, 0.045) 2.7rem 2.8rem);
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1), transparent 15%, transparent 88%, rgba(255, 255, 255, 0.16)),
+    repeating-linear-gradient(0deg, transparent 0 2.15rem, rgba(22, 38, 58, 0.045) 2.15rem 2.25rem);
   pointer-events: none;
 }
 
 .front {
-  border-radius: 0 1.2rem 1.2rem 0;
+  border-radius: 1rem;
 }
 
 .back {
   transform: rotateY(180deg);
-  border-radius: 1.2rem 0 0 1.2rem;
+  border-radius: 1rem;
 }
 
 .page-base-left .page {
@@ -548,6 +654,32 @@ input {
   border-radius: 0 1.2rem 1.2rem 0;
 }
 
+.book.is-mobile .page {
+  border-radius: 1rem;
+}
+
+.mobile-face {
+  transform-origin: left center;
+}
+
+.mobile-front {
+  border-radius: 1rem;
+}
+
+.mobile-back {
+  transform: rotateY(180deg);
+  border-radius: 1rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.46), transparent 14%),
+    linear-gradient(180deg, #efe3c7, #e6d3aa);
+}
+
+.mobile-back::after {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.12), transparent 16%, transparent 90%, rgba(255, 255, 255, 0.14)),
+    repeating-linear-gradient(0deg, transparent 0 2.45rem, rgba(22, 38, 58, 0.04) 2.45rem 2.55rem);
+}
+
 .page > * {
   position: relative;
   z-index: 1;
@@ -556,9 +688,9 @@ input {
 .page-chip {
   display: inline-flex;
   width: fit-content;
-  padding: 0.45rem 0.7rem;
+  padding: 0.32rem 0.5rem;
   border-radius: 999px;
-  font-size: 0.74rem;
+  font-size: 0.58rem;
   font-weight: 700;
   background: rgba(17, 106, 96, 0.13);
   color: #0c4a44;
@@ -567,14 +699,14 @@ input {
 .page h3 {
   margin: 0;
   font-family: "Bebas Neue", sans-serif;
-  font-size: 2.05rem;
+  font-size: 1.62rem;
   letter-spacing: 0.05em;
   line-height: 0.94;
 }
 
 .page p {
   margin: 0;
-  line-height: 1.55;
+  line-height: 1.38;
 }
 
 .inside-cover {
@@ -655,13 +787,13 @@ input {
 }
 
 .opening-hero h3 {
-  font-size: 2.55rem;
+  font-size: 2rem;
 }
 
 .featured-strip,
 .stars-panel {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 0.85rem;
 }
 
@@ -814,8 +946,8 @@ input {
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: 0.32rem;
-  padding: 0.9rem;
+  gap: 0.2rem;
+  padding: 0.55rem;
   text-align: center;
   background:
     radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.55), transparent 22%),
@@ -825,8 +957,8 @@ input {
 
 .photo-placeholder::before {
   content: "";
-  width: 4.4rem;
-  height: 4.4rem;
+  width: 3.25rem;
+  height: 3.25rem;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.78);
   box-shadow:
@@ -836,9 +968,9 @@ input {
 
 .photo-placeholder::after {
   content: "";
-  width: 6rem;
-  height: 3rem;
-  margin-top: -0.8rem;
+  width: 4.7rem;
+  height: 2.3rem;
+  margin-top: -0.55rem;
   border-radius: 52% 52% 24% 24%;
   background: rgba(255, 255, 255, 0.76);
 }
@@ -854,13 +986,13 @@ input {
   z-index: 1;
   margin: 0;
   font-family: "Bebas Neue", sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.18rem;
   letter-spacing: 0.05em;
   line-height: 1;
 }
 
 .photo-placeholder span {
-  font-size: 0.72rem;
+  font-size: 0.6rem;
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -870,7 +1002,7 @@ input {
 .photo-placeholder small {
   margin: 0;
   max-width: 9rem;
-  font-size: 0.76rem;
+  font-size: 0.64rem;
   line-height: 1.3;
   color: rgba(22, 38, 58, 0.72);
 }
@@ -904,7 +1036,7 @@ input {
 }
 
 .sticker-art {
-  height: 10.7rem;
+  height: 7.8rem;
   margin-bottom: 0.75rem;
   border-radius: 0.9rem;
   border: 1px solid rgba(22, 38, 58, 0.08);
@@ -961,11 +1093,11 @@ input {
 }
 
 .sticker-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .sticker-grid.wide {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .sticker-slot {
@@ -1008,7 +1140,7 @@ input {
 }
 
 .mini-sticker {
-  width: 11rem;
+  width: 100%;
   min-height: 5.7rem;
   display: grid;
   gap: 0.6rem;
@@ -1036,7 +1168,7 @@ input {
 }
 
 .star-portrait {
-  height: 10rem;
+  height: 7.8rem;
   border-radius: 1rem;
   background:
     radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.26), transparent 28%),
@@ -1090,7 +1222,7 @@ input {
 }
 
 .arena-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .arena-card {
@@ -1115,7 +1247,7 @@ input {
 }
 
 .stats-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .stat-card {
@@ -1146,7 +1278,7 @@ input {
 }
 
 .specials-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .special-card {
@@ -1171,18 +1303,18 @@ input {
 
 .render-page {
   justify-content: flex-start;
-  gap: 0.85rem;
+  gap: 0.55rem;
 }
 
 .team-head {
   display: grid;
-  gap: 0.3rem;
-  margin-bottom: 0.35rem;
+  gap: 0.16rem;
+  margin-bottom: 0.05rem;
 }
 
 .team-kicker {
   margin: 0;
-  font-size: 0.76rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1196,13 +1328,13 @@ input {
 }
 
 .team-part {
-  font-size: 0.82rem;
+  font-size: 0.68rem;
   font-weight: 600;
 }
 
 .page-note {
   margin-top: auto;
-  padding: 1rem;
+  padding: 0.75rem;
   border-radius: 1rem;
   background: rgba(255, 255, 255, 0.56);
   line-height: 1.5;
@@ -1214,35 +1346,35 @@ input {
   grid-auto-rows: max-content;
   justify-content: center;
   align-content: flex-start;
-  gap: 0.8rem;
+  gap: 0.5rem;
 }
 
 .person-grid.is-single {
-  grid-template-columns: minmax(0, 13rem);
+  grid-template-columns: minmax(0, min(10.5rem, 74%));
 }
 
 .person-grid.is-two {
-  grid-template-columns: repeat(2, minmax(0, 11.5rem));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .person-grid.is-three,
 .person-grid.is-four {
-  grid-template-columns: repeat(2, minmax(0, 11rem));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .person-grid.is-three .person-card:last-child {
   grid-column: 1 / -1;
   justify-self: center;
-  width: 11rem;
+  width: min(50%, 8.4rem);
 }
 
 .person-card {
   position: relative;
   display: grid;
-  gap: 0.5rem;
+  gap: 0.32rem;
   width: 100%;
-  padding: 0.62rem;
-  border-radius: 1rem;
+  padding: 0.44rem;
+  border-radius: 0.8rem;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.78)),
     linear-gradient(145deg, rgba(255, 255, 255, 0.26), transparent);
@@ -1253,14 +1385,14 @@ input {
 .person-card::before {
   content: "";
   position: absolute;
-  inset: 0.42rem;
-  border-radius: 0.82rem;
+  inset: 0.3rem;
+  border-radius: 0.62rem;
   border: 1px dashed rgba(17, 106, 96, 0.16);
   pointer-events: none;
 }
 
 .person-card .photo-frame {
-  aspect-ratio: 4 / 4.8;
+  aspect-ratio: 4 / 3.35;
 }
 
 .leader-card {
@@ -1268,7 +1400,7 @@ input {
 }
 
 .leader-card .photo-frame {
-  aspect-ratio: 4 / 4.8;
+  aspect-ratio: 4 / 3.35;
 }
 
 .leader-frame {
@@ -1278,11 +1410,11 @@ input {
 
 .leader-ribbon {
   position: absolute;
-  top: 0.9rem;
-  right: 0.9rem;
+  top: 0.62rem;
+  right: 0.62rem;
   z-index: 3;
-  width: 1.45rem;
-  height: 1.45rem;
+  width: 1.15rem;
+  height: 1.15rem;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -1290,7 +1422,7 @@ input {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 246, 222, 0.98));
   color: #8a6720;
   font-family: "Bebas Neue", sans-serif;
-  font-size: 0.95rem;
+  font-size: 0.76rem;
   line-height: 1;
   letter-spacing: 0.02em;
   box-shadow: 0 0.28rem 0.6rem rgba(0, 0, 0, 0.08);
@@ -1304,7 +1436,7 @@ input {
 
 .person-name {
   display: block;
-  font-size: 0.83rem;
+  font-size: 0.68rem;
   line-height: 1.25;
   color: var(--ink);
   text-align: center;
@@ -1426,13 +1558,14 @@ input {
 .progress-dots {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.55rem;
-  justify-content: flex-end;
+  gap: 0.4rem;
+  justify-content: center;
+  max-width: min(100%, 25rem);
 }
 
 .dot {
-  width: 0.95rem;
-  height: 0.95rem;
+  width: 0.72rem;
+  height: 0.72rem;
   padding: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.22);
@@ -1444,105 +1577,721 @@ input {
   transform: scale(1.2);
 }
 
-@media (max-width: 1180px) {
+@media (min-width: 480px) {
   :root {
-    --page-width: 26rem;
-    --page-height: 38rem;
+    --page-width: min(88vw, 23rem, calc((100dvh - 10.2rem) / var(--page-ratio)));
   }
 
-  .featured-strip,
-  .stars-panel,
-  .specials-grid {
-    grid-template-columns: 1fr;
+  .experience {
+    padding: 0.75rem;
   }
 
-  .sticker-art,
-  .star-portrait {
-    height: 7.8rem;
+  .cover-stage,
+  .album-stage {
+    padding: 0.75rem;
+    border-radius: 1.45rem;
+  }
+
+  .cover-card {
+    width: min(100%, 28rem, calc((100dvh - 2rem) * 17 / 24));
+    padding: 1.25rem;
+    border-radius: 1.45rem;
+  }
+
+  .cover-card::before {
+    inset: 1rem;
+    border-radius: 1.05rem;
+  }
+
+  .cover-card::after {
+    inset: 1.55rem;
+  }
+
+  .cover-header {
+    gap: 0.7rem;
+    font-size: 0.68rem;
+  }
+
+  .cover-body {
+    gap: 0.75rem;
+  }
+
+  .cover-copy {
+    font-size: 0.9rem;
+    line-height: 1.52;
+  }
+
+  .cover-emblem {
+    width: 9.8rem;
+    margin: 0.65rem auto;
+  }
+
+  .cover-ribbon span {
+    font-size: 0.78rem;
+  }
+
+  .album-stage {
+    gap: 0.7rem;
+  }
+
+  .page {
+    padding: 1rem;
+    gap: 0.7rem;
+    border-radius: 1.1rem;
+  }
+
+  .front,
+  .back,
+  .book.is-mobile .page,
+  .mobile-front,
+  .mobile-back {
+    border-radius: 1.1rem;
+  }
+
+  .page-chip {
+    padding: 0.38rem 0.62rem;
+    font-size: 0.64rem;
+  }
+
+  .page h3 {
+    font-size: 1.78rem;
+  }
+
+  .team-head {
+    gap: 0.18rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .team-kicker {
+    font-size: 0.68rem;
+  }
+
+  .team-part {
+    font-size: 0.74rem;
+  }
+
+  .person-grid {
+    gap: 0.58rem;
+  }
+
+  .person-card {
+    padding: 0.5rem;
+    gap: 0.38rem;
+  }
+
+  .person-name {
+    font-size: 0.74rem;
+  }
+
+  .leader-ribbon {
+    top: 0.72rem;
+    right: 0.72rem;
+    width: 1.28rem;
+    height: 1.28rem;
+    font-size: 0.82rem;
   }
 }
 
-@media (max-width: 920px) {
+@media (min-width: 768px) {
+  :root {
+    --page-width: min(24rem, calc((100vw - 3rem) / 2), calc((100dvh - 8.7rem) / var(--page-ratio)));
+    --book-depth: 1rem;
+    --transition: 900ms cubic-bezier(0.2, 0.7, 0.15, 1);
+  }
+
+  .scene-glow {
+    width: 20rem;
+    height: 20rem;
+    opacity: 0.24;
+  }
+
   .experience {
     padding: 1rem;
   }
 
-  .album-shell {
-    grid-template-columns: 1fr;
+  .stage-shell {
+    width: min(100%, 110rem);
+    height: min(calc(100dvh - 2rem), 58rem);
   }
 
-  .nav-button {
-    display: none;
-  }
-
-  .album-frame {
-    overflow-x: auto;
-    justify-items: start;
-    padding-bottom: 1rem;
-  }
-
-  .book {
-    margin-inline: auto;
-  }
-
-  .topbar,
-  .album-footer {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .progress-dots {
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 720px) {
-  :root {
-    --page-width: 18rem;
-    --page-height: 30rem;
+  .cover-stage,
+  .album-stage {
+    padding: clamp(1rem, 2vw, 1.35rem);
+    border-radius: 1.7rem;
   }
 
   .cover-card {
-    min-height: 42rem;
-    transform: none;
+    width: min(100%, 34rem, calc((100dvh - 4rem) * 17 / 24));
+    padding: 1.55rem;
+    border-radius: 1.65rem;
+    transform: rotate(-2.2deg);
+  }
+
+  .cover-card:hover {
+    transform: rotate(-1deg) translateY(-0.35rem);
+  }
+
+  .cover-card::before {
+    inset: 1.15rem;
+    border-radius: 1.25rem;
+  }
+
+  .cover-card::after {
+    inset: 1.8rem;
+  }
+
+  .cover-header {
+    font-size: 0.74rem;
+  }
+
+  .cover-body {
+    gap: 0.9rem;
+  }
+
+  .cover-body h1 {
+    font-size: clamp(4rem, 7vw, 5.5rem);
+  }
+
+  .cover-copy {
+    font-size: 0.96rem;
+    line-height: 1.6;
+  }
+
+  .cover-emblem {
+    width: 11rem;
+    margin: 0.85rem auto;
+    border-width: 0.36rem;
+  }
+
+  .cover-emblem strong {
+    font-size: 3.35rem;
+  }
+
+  .emblem-ball {
+    width: 4.25rem;
+  }
+
+  .emblem-star {
+    top: -0.8rem;
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+
+  .emblem-star:nth-child(1) {
+    left: 1.85rem;
+  }
+
+  .emblem-star:nth-child(3) {
+    right: 1.85rem;
+  }
+
+  .cover-ribbon {
+    gap: 0.65rem;
+  }
+
+  .cover-ribbon span {
+    padding: 0.48rem 0.85rem;
+    font-size: 0.84rem;
+  }
+
+  .primary-action {
+    width: auto;
+    min-width: 12rem;
+    padding: 0.9rem 1.4rem;
   }
 
   .album-frame {
-    justify-items: center;
-    padding-inline: 0.3rem;
+    min-height: calc(var(--page-height) + 1.25rem);
+    padding-inline: 0;
   }
 
-  .sticker-grid,
+  .album-shadow {
+    width: calc(var(--page-width) * 2.02);
+    height: 2.2rem;
+    bottom: 1.25rem;
+    filter: blur(20px);
+  }
+
+  .book {
+    width: calc(var(--page-width) * 2);
+  }
+
+  .book.is-mobile {
+    width: var(--page-width);
+  }
+
+  .sheet {
+    left: 50%;
+  }
+
+  .mobile-sheet {
+    left: 0;
+    width: 100%;
+  }
+
+  .page {
+    padding: 1.15rem;
+    gap: 0.85rem;
+    border-radius: 0 1.1rem 1.1rem 0;
+  }
+
+  .page::after {
+    background:
+      linear-gradient(90deg, rgba(0, 0, 0, 0.14), transparent 15%, transparent 88%, rgba(255, 255, 255, 0.2)),
+      repeating-linear-gradient(0deg, transparent 0 2.7rem, rgba(22, 38, 58, 0.045) 2.7rem 2.8rem);
+  }
+
+  .front {
+    border-radius: 0 1.2rem 1.2rem 0;
+  }
+
+  .back {
+    border-radius: 1.2rem 0 0 1.2rem;
+  }
+
+  .page-base-left .page {
+    border-radius: 1.2rem 0 0 1.2rem;
+  }
+
+  .page-base-right .page {
+    border-radius: 0 1.2rem 1.2rem 0;
+  }
+
+  .book.is-mobile .page,
+  .mobile-front,
+  .mobile-back {
+    border-radius: 1.2rem;
+  }
+
+  .page-chip {
+    padding: 0.42rem 0.66rem;
+    font-size: 0.7rem;
+  }
+
+  .page h3 {
+    font-size: 1.95rem;
+  }
+
+  .page p {
+    line-height: 1.5;
+  }
+
+  .opening-hero h3 {
+    font-size: 2.3rem;
+  }
+
+  .featured-strip,
+  .stars-panel,
   .sticker-grid.wide,
   .arena-grid,
-  .stats-grid,
-  .specials-grid,
-  .person-grid,
-  .person-grid.is-single,
-  .person-grid.is-two,
-  .person-grid.is-three,
-  .person-grid.is-four {
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sticker-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .specials-grid {
     grid-template-columns: 1fr;
   }
 
+  .mini-sticker {
+    width: 11rem;
+  }
+
+  .render-page {
+    gap: 0.72rem;
+  }
+
+  .team-head {
+    gap: 0.26rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .team-kicker {
+    font-size: 0.72rem;
+  }
+
+  .team-part {
+    font-size: 0.78rem;
+  }
+
+  .person-grid {
+    gap: 0.68rem;
+  }
+
+  .person-grid.is-single {
+    grid-template-columns: minmax(0, 13rem);
+  }
+
   .person-grid.is-three .person-card:last-child {
-    grid-column: auto;
-    width: 100%;
+    width: min(50%, 10rem);
   }
 
   .person-card {
-    max-width: none;
+    padding: 0.56rem;
+    gap: 0.45rem;
+    border-radius: 0.95rem;
   }
 
-  .formation-line.split {
+  .person-card::before {
+    inset: 0.38rem;
+    border-radius: 0.75rem;
+  }
+
+  .person-card .photo-frame,
+  .leader-card .photo-frame {
+    aspect-ratio: 4 / 3.35;
+  }
+
+  .leader-ribbon {
+    top: 0.82rem;
+    right: 0.82rem;
+    width: 1.36rem;
+    height: 1.36rem;
+    font-size: 0.88rem;
+  }
+
+  .person-name {
+    font-size: 0.78rem;
+  }
+
+  .photo-placeholder {
+    gap: 0.28rem;
+    padding: 0.75rem;
+  }
+
+  .photo-placeholder::before {
+    width: 3.8rem;
+    height: 3.8rem;
+  }
+
+  .photo-placeholder::after {
+    width: 5.3rem;
+    height: 2.65rem;
+    margin-top: -0.65rem;
+  }
+
+  .photo-placeholder strong {
+    font-size: 1.35rem;
+  }
+
+  .photo-placeholder span {
+    font-size: 0.68rem;
+  }
+
+  .photo-placeholder small {
+    font-size: 0.7rem;
+  }
+
+  .progress-dots {
+    gap: 0.5rem;
+  }
+
+  .dot {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
+}
+
+@media (min-width: 960px) {
+  :root {
+    --page-width: min(29rem, calc((100vw - 11rem) / 2), calc((100dvh - 9.2rem) / var(--page-ratio)));
+  }
+
+  .topbar {
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+  }
+
+  .topbar-heading {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .topbar::after {
+    content: "";
+    width: 5rem;
+    height: 1px;
+  }
+
+  .topbar h2 {
+    font-size: clamp(2rem, 3vw, 2.7rem);
+  }
+
+  .album-back {
+    justify-self: start;
+    padding: 0.68rem 0.9rem;
+  }
+
+  .album-back strong {
+    font-size: 0.78rem;
+  }
+
+  .album-shell {
+    grid-template-columns: auto 1fr auto;
+    gap: clamp(0.65rem, 1vw, 1rem);
+  }
+
+  .nav-button {
+    display: grid;
+  }
+}
+
+@media (min-width: 1180px) {
+  :root {
+    --page-width: min(32rem, calc((100vw - 12rem) / 2), calc((100dvh - 10rem) / var(--page-ratio)));
+    --book-depth: 1.2rem;
+  }
+
+  .scene-glow {
+    width: 24rem;
+    height: 24rem;
+    filter: blur(40px);
+    opacity: 0.28;
+  }
+
+  .cover-stage,
+  .album-stage {
+    padding: clamp(1rem, 2.4vw, 1.8rem);
+    border-radius: 2rem;
+  }
+
+  .cover-card {
+    width: auto;
+    max-width: min(100%, 34rem);
+    height: min(100%, 48rem);
+    padding: 1.8rem;
+    border-radius: 1.9rem;
+  }
+
+  .cover-card::before {
+    inset: 1.25rem;
+    border-radius: 1.4rem;
+  }
+
+  .cover-card::after {
+    inset: 1.95rem;
+  }
+
+  .cover-header {
+    gap: 1rem;
+    font-size: 0.78rem;
+  }
+
+  .cover-badge,
+  .cover-year {
+    padding: 0.45rem 0.8rem;
+  }
+
+  .cover-body {
+    gap: 1rem;
+  }
+
+  .cover-body h1 {
+    font-size: clamp(4rem, 7vw, 6.2rem);
+  }
+
+  .cover-copy {
+    font-size: 0.98rem;
+    line-height: 1.65;
+  }
+
+  .cover-emblem {
+    width: 12rem;
+    margin: 1rem auto;
+    border-width: 0.4rem;
+  }
+
+  .cover-emblem strong {
+    font-size: 3.6rem;
+  }
+
+  .emblem-ball {
+    width: 4.5rem;
+  }
+
+  .emblem-star {
+    top: -0.85rem;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .emblem-star:nth-child(1) {
+    left: 2rem;
+  }
+
+  .emblem-star:nth-child(3) {
+    right: 2rem;
+  }
+
+  .cover-ribbon span {
+    padding: 0.5rem 0.95rem;
+    font-size: inherit;
+  }
+
+  .album-stage {
+    gap: 1rem;
+  }
+
+  .nav-button {
+    width: clamp(3.1rem, 3.6vw, 3.75rem);
+    height: clamp(3.1rem, 3.6vw, 3.75rem);
+  }
+
+  .album-frame {
+    min-height: calc(var(--page-height) + 1.5rem);
+  }
+
+  .album-shadow {
+    width: calc(var(--page-width) * 2.05);
+    height: 2.5rem;
+    bottom: 1.7rem;
+    filter: blur(22px);
+  }
+
+  .page {
+    padding: 1.45rem;
+    gap: 1.1rem;
+  }
+
+  .page-chip {
+    padding: 0.45rem 0.7rem;
+    font-size: 0.74rem;
+  }
+
+  .page h3 {
+    font-size: 2.05rem;
+  }
+
+  .opening-hero h3 {
+    font-size: 2.55rem;
+  }
+
+  .featured-strip,
+  .stars-panel {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sticker-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sticker-grid.wide,
+  .arena-grid,
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .specials-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sticker-art {
+    height: 10.7rem;
+  }
+
+  .star-portrait {
+    height: 10rem;
+  }
+
+  .render-page {
+    gap: 0.85rem;
+  }
+
+  .team-head {
+    gap: 0.3rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .team-kicker {
+    font-size: 0.76rem;
+  }
+
+  .team-part {
+    font-size: 0.82rem;
+  }
+
+  .person-grid {
     gap: 0.8rem;
   }
 
-  .mini-sticker {
-    width: 100%;
+  .person-grid.is-two {
+    grid-template-columns: repeat(2, minmax(0, 11.5rem));
+  }
+
+  .person-grid.is-three,
+  .person-grid.is-four {
+    grid-template-columns: repeat(2, minmax(0, 11rem));
+  }
+
+  .person-grid.is-three .person-card:last-child {
+    width: 11rem;
+  }
+
+  .person-card {
+    padding: 0.62rem;
+    gap: 0.5rem;
+    border-radius: 1rem;
+  }
+
+  .person-card::before {
+    inset: 0.42rem;
+    border-radius: 0.82rem;
+  }
+
+  .person-card .photo-frame,
+  .leader-card .photo-frame {
+    aspect-ratio: 4 / 3.35;
+  }
+
+  .leader-ribbon {
+    top: 0.9rem;
+    right: 0.9rem;
+    width: 1.45rem;
+    height: 1.45rem;
+    font-size: 0.95rem;
+  }
+
+  .person-name {
+    font-size: 0.83rem;
+  }
+
+  .photo-placeholder {
+    gap: 0.32rem;
+    padding: 0.9rem;
+  }
+
+  .photo-placeholder::before {
+    width: 4.4rem;
+    height: 4.4rem;
+  }
+
+  .photo-placeholder::after {
+    width: 6rem;
+    height: 3rem;
+    margin-top: -0.8rem;
+  }
+
+  .photo-placeholder strong {
+    font-size: 1.5rem;
+  }
+
+  .photo-placeholder span {
+    font-size: 0.72rem;
+  }
+
+  .photo-placeholder small {
+    font-size: 0.76rem;
+  }
+
+  .dot {
+    width: 0.95rem;
+    height: 0.95rem;
   }
 
   .legendary-frame {
-    min-height: 18rem;
+    min-height: 25rem;
   }
 }

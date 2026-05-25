@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Album da TI 2026</title>
+    <title>Álbum da TI 2026</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,70 +17,75 @@
     <div class="scene-glow scene-glow-right"></div>
 
     <main class="experience">
-      <section class="cover-stage" id="coverStage">
-        <div class="cover-card" role="button" tabindex="0" aria-label="Abrir album da TI">
-          <div class="cover-noise"></div>
-          <div class="cover-header">
-            <span class="cover-badge">Colecao oficial</span>
-            <span class="cover-year">Edicao 2026</span>
-          </div>
-
-          <div class="cover-body">
-            <p class="cover-kicker">Album de Figurinhas</p>
-            <h1>Selecao da TI</h1>
-            <p class="cover-copy">
-              Infra, suporte, dados, desenvolvimento, seguranca e produto reunidos
-              em um album com cara de Copa.
-            </p>
-
-            <div class="cover-emblem">
-              <span class="emblem-star"></span>
-              <span class="emblem-star"></span>
-              <span class="emblem-star"></span>
-              <div class="emblem-ball"></div>
-              <strong>TI</strong>
+      <div class="stage-shell">
+        <section class="cover-stage" id="coverStage">
+          <div class="cover-card" role="button" tabindex="0" aria-label="Abrir álbum da TI">
+            <div class="cover-noise"></div>
+            <div class="cover-header">
+              <span class="cover-badge">Coleção oficial</span>
+              <span class="cover-year">Edição 2026</span>
             </div>
 
-            <div class="cover-ribbon">
-              <span>Edicao especial</span>
-              <span>Rumo ao hexa da inovacao</span>
+            <div class="cover-body">
+              <p class="cover-kicker">Álbum de Figurinhas</p>
+              <h1>Seleção da TI</h1>
+              <p class="cover-copy">
+                Líderes, Dados, Central, Operações, NOC, ERP, Governança, AI Lab,
+                Staff e Super Pro.
+              </p>
+
+              <div class="cover-emblem">
+                <span class="emblem-star"></span>
+                <span class="emblem-star"></span>
+                <span class="emblem-star"></span>
+                <div class="emblem-ball"></div>
+                <strong>TI</strong>
+              </div>
+
+              <div class="cover-ribbon">
+                <span>Edição especial</span>
+                <span>Rumo ao hexa da inovação</span>
+              </div>
+            </div>
+
+            <div class="cover-footer">
+              <button class="primary-action" id="openAlbum">Abrir álbum</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="album-stage is-hidden" id="albumStage">
+          <div class="topbar">
+            <button class="album-back" id="backToCover" aria-label="Voltar para a capa">
+              <span></span>
+              <strong>Capa</strong>
+            </button>
+            <div class="topbar-heading">
+              <p class="eyebrow">Álbum da TI</p>
+              <h2>Coleção de pessoas</h2>
             </div>
           </div>
 
-          <div class="cover-footer">
-            <button class="primary-action" id="openAlbum">Abrir album</button>
-            <p>Clique na capa para entrar no modo folheando.</p>
-          </div>
-        </div>
-      </section>
+          <div class="album-shell">
+            <button class="nav-button nav-prev" id="prevBtn" aria-label="Voltar página">
+              <span></span>
+            </button>
 
-      <section class="album-stage is-hidden" id="albumStage">
-        <div class="topbar">
-          <div>
-            <p class="eyebrow">Album da TI</p>
-            <h2>Colecao de pessoas</h2>
-          </div>
-        </div>
+            <div class="album-frame">
+              <div class="album-shadow"></div>
+              <div class="book" id="book"></div>
+            </div>
 
-        <div class="album-shell">
-          <button class="nav-button nav-prev" id="prevBtn" aria-label="Voltar pagina">
-            <span></span>
-          </button>
-
-          <div class="album-frame">
-            <div class="album-shadow"></div>
-            <div class="book" id="book"></div>
+            <button class="nav-button nav-next" id="nextBtn" aria-label="Avançar página">
+              <span></span>
+            </button>
           </div>
 
-          <button class="nav-button nav-next" id="nextBtn" aria-label="Avancar pagina">
-            <span></span>
-          </button>
-        </div>
-
-        <div class="album-footer">
-          <div class="progress-dots" id="progressDots" aria-label="Progresso do album"></div>
-        </div>
-      </section>
+          <div class="album-footer">
+            <div class="progress-dots" id="progressDots" aria-label="Progresso do álbum"></div>
+          </div>
+        </section>
+      </div>
     </main>
 
     <script src="./script.js"></script>

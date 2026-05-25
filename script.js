@@ -3,16 +3,19 @@ const albumStage = document.getElementById("albumStage");
 const book = document.getElementById("book");
 const coverCard = document.querySelector(".cover-card");
 const openAlbumButton = document.getElementById("openAlbum");
+const backToCoverButton = document.getElementById("backToCover");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const spreadCounter = document.getElementById("spreadCounter");
 const progressDotsContainer = document.getElementById("progressDots");
+const mobileLayoutQuery = window.matchMedia("(max-width: 767px)");
+const coverUrl = `${window.location.pathname}${window.location.search}`;
 
 const teamDefinitions = [
   {
     id: "team-1",
     team: "Time 1",
-    title: "Lideres",
+    title: "Líderes",
     leader: { id: "time1-bruno", name: "Bruno" },
     members: [
       { id: "time1-wagner", name: "Wagner" },
@@ -44,7 +47,7 @@ const teamDefinitions = [
   {
     id: "team-4",
     team: "Time 4",
-    title: "Operacoes",
+    title: "Operações",
     leader: { id: "time4-guglielmo", name: "Guglielmo" },
     members: [
       { id: "time4-vandrin", name: "Vandrin" },
@@ -78,7 +81,7 @@ const teamDefinitions = [
   {
     id: "team-7",
     team: "Time 7",
-    title: "Governanca",
+    title: "Governança",
     leader: null,
     members: [
       { id: "time7-igor", name: "Igor" },
@@ -131,6 +134,7 @@ let sheets = [];
 let progressDots = [];
 let totalSpreads = 0;
 let currentSpread = 0;
+let isMobileLayout = mobileLayoutQuery.matches;
 
 function pad(value) {
   return String(value).padStart(2, "0");
@@ -178,8 +182,8 @@ function paginateTeams(teams, maxPeoplePerPage = 4) {
     pages.push({
       id: "album-reserva",
       baseTeamId: "album-reserva",
-      team: "Album da TI",
-      title: "Espaco reservado",
+      team: "Álbum da TI",
+      title: "Espaço reservado",
       leader: null,
       members: [],
       partIndex: 1,
@@ -204,6 +208,33 @@ function buildBookStructure() {
     return;
   }
 
+  if (isMobileLayout) {
+    book.classList.add("is-mobile");
+    book.innerHTML = albumPages
+      .map(
+        (page, index) => `
+          <div class="sheet mobile-sheet" data-sheet="${index}">
+            <div class="page mobile-face mobile-front render-page" data-page-id="${escapeHtml(page.id)}"></div>
+            <div class="page mobile-face mobile-back" aria-hidden="true"></div>
+          </div>
+        `,
+      )
+      .join("");
+
+    sheets = [...book.querySelectorAll(".sheet")];
+    totalSpreads = albumPages.length;
+    currentSpread = Math.min(currentSpread, totalSpreads - 1);
+
+    progressDotsContainer.innerHTML = Array.from({ length: totalSpreads }, (_, index) => {
+      const activeClass = index === currentSpread ? " is-active" : "";
+      return `<button class="dot${activeClass}" data-spread="${index}" aria-label="Abrir página ${index + 1}"></button>`;
+    }).join("");
+
+    progressDots = [...progressDotsContainer.querySelectorAll(".dot")];
+    return;
+  }
+
+  book.classList.remove("is-mobile");
   const firstPage = albumPages[0];
   const lastPage = albumPages[albumPages.length - 1];
   const middlePages = albumPages.slice(1, -1);
@@ -245,6 +276,21 @@ function buildBookStructure() {
   progressDots = [...progressDotsContainer.querySelectorAll(".dot")];
 }
 
+function rebuildBookLayout(nextIsMobile = mobileLayoutQuery.matches) {
+  const wasMobileLayout = isMobileLayout;
+
+  if (wasMobileLayout !== nextIsMobile) {
+    currentSpread = nextIsMobile
+      ? Math.min(currentSpread * 2, Math.max(albumPages.length - 1, 0))
+      : Math.floor(currentSpread / 2);
+  }
+
+  isMobileLayout = nextIsMobile;
+  buildBookStructure();
+  renderAlbumPages();
+  updateBook();
+}
+
 function renderMediaBadge(media) {
   if (!media || media.type !== "gif") {
     return "";
@@ -280,7 +326,7 @@ function renderPhotoFrame(person, leader = false) {
 
 function renderPersonCard(person, leader = false) {
   const cardClass = leader ? "person-card leader-card" : "person-card";
-  const ribbon = leader ? '<span class="leader-ribbon" aria-label="Capitao">C</span>' : "";
+  const ribbon = leader ? '<span class="leader-ribbon" aria-label="Capitão">C</span>' : "";
 
   return `
     <article class="${cardClass}" data-sticker="${escapeHtml(person.id)}">
@@ -293,14 +339,14 @@ function renderPersonCard(person, leader = false) {
 
 function renderReservedPage(pageData) {
   return `
-    <div class="page-chip">Pagina ${pad(pageData.page)}</div>
+    <div class="page-chip">Página ${pad(pageData.page)}</div>
     <div class="team-head">
       <p class="team-kicker">${escapeHtml(pageData.team)}</p>
       <h3>${escapeHtml(pageData.title)}</h3>
     </div>
     <p class="page-note">
-      Esta pagina fica reservada para manter a montagem do album equilibrada
-      quando a quantidade total de paginas for impar.
+      Esta página fica reservada para manter a montagem do álbum equilibrada
+      quando a quantidade total de páginas for ímpar.
     </p>
   `;
 }
@@ -337,7 +383,7 @@ function renderTeamPage(teamPage) {
   const gridClass = getRosterLayoutClass(roster.length);
 
   return `
-    <div class="page-chip">Pagina ${pad(teamPage.page)}</div>
+    <div class="page-chip">Página ${pad(teamPage.page)}</div>
     <div class="team-head">
       <p class="team-kicker">${escapeHtml(teamPage.team)}</p>
       <h3>${escapeHtml(teamPage.title)}</h3>
@@ -390,11 +436,47 @@ function goToSpread(targetSpread) {
   updateBook();
 }
 
-function openAlbum() {
-  coverStage.classList.add("is-hidden");
-  albumStage.classList.remove("is-hidden");
+function setActiveStage(stage, { focusTarget = null } = {}) {
+  const showAlbum = stage === "album";
+
+  coverStage.classList.toggle("is-hidden", showAlbum);
+  albumStage.classList.toggle("is-hidden", !showAlbum);
+  coverStage.setAttribute("aria-hidden", String(showAlbum));
+  albumStage.setAttribute("aria-hidden", String(!showAlbum));
+
+  if (!focusTarget) {
+    return;
+  }
+
   requestAnimationFrame(() => {
-    albumStage.scrollIntoView({ behavior: "smooth", block: "start" });
+    focusTarget.focus({ preventScroll: true });
+  });
+}
+
+function openAlbum({ pushHistory = true, focus = true } = {}) {
+  setActiveStage("album", { focusTarget: focus ? backToCoverButton : null });
+
+  if (!pushHistory) {
+    return;
+  }
+
+  history.pushState({ view: "album" }, "", "#album");
+}
+
+function closeAlbum({ useHistory = true, focus = true } = {}) {
+  if (useHistory && history.state?.view === "album") {
+    history.back();
+    return;
+  }
+
+  history.replaceState({ view: "cover" }, "", coverUrl);
+  setActiveStage("cover", { focusTarget: focus ? coverCard : null });
+}
+
+function syncStageFromHistory(state) {
+  const view = state?.view === "album" ? "album" : "cover";
+  setActiveStage(view, {
+    focusTarget: view === "album" ? backToCoverButton : coverCard,
   });
 }
 
@@ -409,6 +491,10 @@ coverCard.addEventListener("keydown", (event) => {
 openAlbumButton.addEventListener("click", (event) => {
   event.stopPropagation();
   openAlbum();
+});
+
+backToCoverButton.addEventListener("click", () => {
+  closeAlbum();
 });
 
 prevBtn.addEventListener("click", () => goToSpread(currentSpread - 1));
@@ -450,6 +536,14 @@ window.addEventListener("keydown", (event) => {
   if (event.key === "ArrowLeft") {
     goToSpread(currentSpread - 1);
   }
+
+  if (event.key === "Escape") {
+    closeAlbum();
+  }
+});
+
+window.addEventListener("popstate", (event) => {
+  syncStageFromHistory(event.state);
 });
 
 let touchStartX = 0;
@@ -484,6 +578,16 @@ albumStage.addEventListener(
 );
 
 albumPages = paginateTeams(teamDefinitions);
-buildBookStructure();
-renderAlbumPages();
-updateBook();
+rebuildBookLayout();
+history.replaceState({ view: "cover" }, "", coverUrl);
+setActiveStage("cover");
+
+if (typeof mobileLayoutQuery.addEventListener === "function") {
+  mobileLayoutQuery.addEventListener("change", (event) => {
+    rebuildBookLayout(event.matches);
+  });
+} else if (typeof mobileLayoutQuery.addListener === "function") {
+  mobileLayoutQuery.addListener((event) => {
+    rebuildBookLayout(event.matches);
+  });
+}
