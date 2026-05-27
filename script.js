@@ -54,6 +54,7 @@ const teamDefinitions = [
       { id: "time4-donadi", name: "Donadi" },
       { id: "time4-hernan", name: "Hernan" },
       { id: "time4-noel", name: "Noel" },
+      { id: "time4-murilo", name: "Murilo" },
     ],
   },
   {
@@ -63,7 +64,6 @@ const teamDefinitions = [
     leader: { id: "time5-johan", name: "Johan" },
     members: [
       { id: "time5-lucas", name: "Lucas" },
-      { id: "time5-pericaro", name: "Peri\u00e7aro" },
       { id: "time5-elaine", name: "Elaine" },
     ],
   },
