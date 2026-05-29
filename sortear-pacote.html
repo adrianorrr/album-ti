@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sortear Proximo Pacote - Album da TI 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./shared-nav.css?v=20260528-nav" />
+    <link rel="stylesheet" href="./sorteio.css" />
+  </head>
+  <body>
+    <nav class="site-nav" aria-label="Navega&ccedil;&atilde;o principal">
+      <div class="site-nav-inner">
+        <a class="site-logo" href="./index.html">TI 2026</a>
+        <div class="site-links">
+          <a class="site-link" href="./index.html">&Aacute;lbum</a>
+          <a class="site-link" href="./abre-pack.html">Figurinha</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="draw-page">
+      <div class="stadium-scene" aria-hidden="true">
+        <div class="light-beam beam-left"></div>
+        <div class="light-beam beam-center"></div>
+        <div class="light-beam beam-right"></div>
+        <div class="grandstand"></div>
+        <div class="pitch-mark pitch-mark-a"></div>
+        <div class="pitch-mark pitch-mark-b"></div>
+      </div>
+
+      <div class="draw-layout">
+        <header class="draw-hero">
+          <p class="eyebrow">Copa TI 2026</p>
+          <h1>Sorteio do proximo pacote</h1>
+          <div class="hero-badges" aria-label="Resumo do sorteio">
+            <span>4 nomes</span>
+            <span>sem repeticao</span>
+            <span>elenco completo</span>
+          </div>
+        </header>
+
+        <section class="draw-arena" aria-label="Area de sorteio">
+          <div class="score-strip">
+            <div>
+              <span>Disponiveis</span>
+              <strong id="remainingCount">0</strong>
+            </div>
+            <div>
+              <span>Sorteadas</span>
+              <strong id="drawnCount">0</strong>
+            </div>
+            <div>
+              <span>Pacotes</span>
+              <strong id="packCount">0</strong>
+            </div>
+          </div>
+
+          <section class="result-field" aria-live="polite" aria-label="Resultado do pacote sorteado">
+            <div class="field-line"></div>
+            <div class="result-grid" id="resultGrid"></div>
+          </section>
+
+          <div class="draw-controls">
+            <button class="draw-button" id="drawButton" type="button">Sortear 4 nomes</button>
+            <button class="reset-button" id="resetButton" type="button">Reiniciar lista</button>
+          </div>
+
+          <p class="status-message" id="statusMessage"></p>
+        </section>
+
+        <section class="history-panel" aria-label="Pacotes sorteados">
+          <div class="history-head">
+            <p class="eyebrow">Historico</p>
+            <h2>Pacotes sorteados</h2>
+          </div>
+          <div class="history-list" id="historyList"></div>
+        </section>
+      </div>
+    </main>
+
+    <script src="./data.js"></script>
+    <script src="./sorteio.js"></script>
+  </body>
+</html>

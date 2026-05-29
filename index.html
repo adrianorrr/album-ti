@@ -11,15 +11,26 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./shared-nav.css?v=20260528-nav" />
   </head>
   <body>
+    <nav class="site-nav" aria-label="Navega&ccedil;&atilde;o principal">
+      <div class="site-nav-inner">
+        <a class="site-logo" href="./index.html">TI 2026</a>
+        <div class="site-links">
+          <a class="site-link is-active" href="./index.html" aria-current="page">&Aacute;lbum</a>
+          <a class="site-link" href="./abre-pack.html">Figurinha</a>
+        </div>
+      </div>
+    </nav>
+
     <div class="scene-glow scene-glow-left"></div>
     <div class="scene-glow scene-glow-right"></div>
 
     <main class="experience">
       <div class="stage-shell">
         <section class="cover-stage" id="coverStage">
-          <div class="cover-card" role="button" tabindex="0" aria-label="Abrir álbum da TI">
+          <div class="cover-card" role="button" tabindex="0" aria-label="Capa do álbum da TI">
             <div class="cover-noise"></div>
             <div class="cover-header">
               <span class="cover-badge">Coleção oficial</span>
@@ -29,11 +40,6 @@
             <div class="cover-body">
               <p class="cover-kicker">Álbum de Figurinhas</p>
               <h1>Seleção da TI</h1>
-              <p class="cover-copy">
-                Líderes, Dados, Central, Operações, NOC, ERP, Governança, AI Lab,
-                Staff e Super Pro.
-              </p>
-
               <div class="cover-emblem">
                 <span class="emblem-star"></span>
                 <span class="emblem-star"></span>
@@ -46,10 +52,6 @@
                 <span>Edição especial</span>
                 <span>Rumo ao hexa da inovação</span>
               </div>
-            </div>
-
-            <div class="cover-footer">
-              <button class="primary-action" id="openAlbum">Abrir álbum</button>
             </div>
           </div>
         </section>
@@ -88,6 +90,7 @@
       </div>
     </main>
 
+    <script src="./data.js"></script>
     <script src="./script.js"></script>
   </body>
 </html>

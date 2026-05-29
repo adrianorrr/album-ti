@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Figurinha - Copa 2026</title>
+
+  <script src="./assets/gsap.min.js"></script>
+  <link rel="stylesheet" href="./shared-nav.css?v=20260528-nav" />
+
+  <style>
+    :root {
+      --bg-1: #020617;
+      --gold: #ffd76a;
+      --gold-2: #ffb703;
+      --blue: #2f80ff;
+      --red: #ff3b5f;
+      --green: #00d084;
+      --white: #f8fafc;
+      --card-border: rgba(255, 255, 255, 0.22);
+      --pack-w: min(70vw, 285px);
+      --pack-h: calc(var(--pack-w) * 1.38);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg-1);
+      color: var(--white);
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 76px 12px 30px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(47, 128, 255, 0.38), transparent 34%),
+        radial-gradient(circle at 8% 16%, rgba(255, 59, 95, 0.18), transparent 30%),
+        radial-gradient(circle at 92% 20%, rgba(0, 208, 132, 0.16), transparent 30%),
+        linear-gradient(180deg, #06122a 0%, #020617 68%, #01040b 100%);
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, transparent, black 14%, black 68%, transparent);
+      pointer-events: none;
+    }
+
+    .stadium {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .stadium::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -72px;
+      width: 120vw;
+      height: 230px;
+      transform: translateX(-50%);
+      border-radius: 50% 50% 0 0;
+      background:
+        radial-gradient(ellipse at center, rgba(0, 208, 132, 0.24), transparent 58%),
+        linear-gradient(180deg, rgba(4, 120, 87, 0.55), rgba(2, 6, 23, 0.95));
+      box-shadow: 0 -30px 100px rgba(0, 208, 132, 0.15);
+    }
+
+    .stadium-line {
+      position: absolute;
+      left: 50%;
+      bottom: 70px;
+      width: min(620px, 92vw);
+      height: 90px;
+      transform: translateX(-50%);
+      border: 2px solid rgba(255, 255, 255, 0.14);
+      border-bottom: none;
+      border-radius: 50% 50% 0 0;
+      opacity: 0.65;
+    }
+
+    .light {
+      position: absolute;
+      top: -80px;
+      width: 180px;
+      height: 82vh;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.24), transparent 78%);
+      filter: blur(18px);
+      opacity: 0.5;
+      transform-origin: top center;
+      mix-blend-mode: screen;
+    }
+
+    .light.left {
+      left: 5%;
+      transform: rotate(24deg);
+    }
+
+    .light.right {
+      right: 5%;
+      transform: rotate(-24deg);
+    }
+
+    .light.center {
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      opacity: 0.33;
+    }
+
+    .app {
+      position: relative;
+      z-index: 2;
+      width: min(100%, 460px);
+      min-height: calc(100vh - 106px);
+      display: grid;
+      place-items: center;
+      perspective: 1200px;
+    }
+
+    .stage {
+      position: relative;
+      width: 100%;
+      min-height: calc(var(--pack-h) + 118px);
+      display: grid;
+      place-items: center;
+      perspective: 1100px;
+    }
+
+    .pack-button {
+      position: relative;
+      width: var(--pack-w);
+      height: var(--pack-h);
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      color: inherit;
+      transform-style: preserve-3d;
+      -webkit-tap-highlight-color: transparent;
+      filter: drop-shadow(0 34px 45px rgba(0, 0, 0, 0.5));
+      z-index: 5;
+    }
+
+    .pack-button:focus-visible {
+      outline: 3px solid rgba(255, 215, 106, 0.9);
+      outline-offset: 12px;
+      border-radius: var(--radius);
+    }
+
+    .pack-shell {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      border-radius: var(--radius);
+    }
+
+    .pack-shadow {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      bottom: -38px;
+      height: 46px;
+      border-radius: 999px;
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7), transparent 70%);
+      filter: blur(10px);
+      transform: translateZ(-60px);
+    }
+
+    .pack-base,
+    .pack-front,
+    .pack-piece {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.28), transparent 20%),
+        radial-gradient(circle at 80% 8%, rgba(0, 208, 132, 0.2), transparent 24%),
+        linear-gradient(135deg, rgba(255, 59, 95, 0.95) 0%, rgba(18, 77, 196, 0.98) 36%, rgba(3, 18, 44, 1) 64%, rgba(0, 208, 132, 0.78) 100%);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+        inset 0 26px 60px rgba(255, 255, 255, 0.08),
+        inset 0 -30px 80px rgba(0, 0, 0, 0.34),
+        0 30px 80px rgba(0, 0, 0, 0.46);
+      backface-visibility: hidden;
+    }
+
+    .pack-base {
+      transform: translateZ(-12px) scale(0.985);
+      filter: brightness(0.72);
+    }
+
+    .pack-front {
+      transform: translateZ(20px);
+    }
+
+    .pack-front::before,
+    .pack-piece::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        linear-gradient(115deg, transparent 0%, rgba(255, 255, 255, 0.04) 22%, rgba(255, 255, 255, 0.45) 34%, transparent 46%),
+        repeating-linear-gradient(60deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 13px);
+      transform: translateX(-36%) rotate(8deg);
+      animation: foilMove 4.8s linear infinite;
+      mix-blend-mode: screen;
+      opacity: 0.9;
+    }
+
+    .pack-front::after,
+    .pack-piece::after {
+      content: "";
+      position: absolute;
+      inset: 13px;
+      border-radius: calc(var(--radius) - 10px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow:
+        inset 0 0 24px rgba(255, 215, 106, 0.18),
+        0 0 30px rgba(47, 128, 255, 0.18);
+      pointer-events: none;
+    }
+
+    @keyframes foilMove {
+      0% {
+        transform: translateX(-42%) rotate(8deg);
+      }
+
+      100% {
+        transform: translateX(42%) rotate(8deg);
+      }
+    }
+
+    .pack-content {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 24px 22px 22px;
+      isolation: isolate;
+    }
+
+    .pack-content::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 78%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      transform: translate(-50%, -45%);
+      background:
+        radial-gradient(circle, rgba(255, 215, 106, 0.45), transparent 60%),
+        conic-gradient(from 120deg, rgba(255, 255, 255, 0.12), rgba(255, 215, 106, 0.38), rgba(47, 128, 255, 0.22), rgba(255, 59, 95, 0.22), rgba(255, 255, 255, 0.12));
+      filter: blur(1px);
+      opacity: 0.95;
+      z-index: -1;
+    }
+
+    .pack-topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .mini-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+    }
+
+    .mini-badge span {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--gold);
+      box-shadow: 0 0 16px var(--gold);
+    }
+
+    .pack-center {
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding-top: 14px;
+    }
+
+    .world-ball {
+      position: relative;
+      width: 102px;
+      aspect-ratio: 1;
+      margin-bottom: 16px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 28%, #ffffff 0 6%, transparent 7%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.95) 0 34%, transparent 35%),
+        conic-gradient(from 40deg, var(--red), var(--blue), var(--green), var(--gold), var(--red));
+      box-shadow:
+        0 0 34px rgba(255, 215, 106, 0.45),
+        inset 0 0 28px rgba(0, 0, 0, 0.18);
+    }
+
+    .world-ball::before,
+    .world-ball::after {
+      content: "";
+      position: absolute;
+      inset: 17%;
+      border-radius: 50%;
+      border: 2px solid rgba(2, 6, 23, 0.34);
+    }
+
+    .world-ball::after {
+      inset: 35% 8%;
+      height: 24%;
+      top: 38%;
+      border-left: 0;
+      border-right: 0;
+      border-radius: 0;
+      transform: rotate(-16deg);
+    }
+
+    .pack-title {
+      font-size: 38px;
+      line-height: 0.84;
+      font-weight: 950;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      text-shadow:
+        0 5px 0 rgba(0, 0, 0, 0.18),
+        0 18px 32px rgba(0, 0, 0, 0.36);
+    }
+
+    .pack-title strong {
+      display: block;
+      color: var(--gold);
+      letter-spacing: 0;
+      text-shadow:
+        0 0 22px rgba(255, 215, 106, 0.48),
+        0 5px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .pack-subtitle {
+      margin-top: 14px;
+      display: inline-flex;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(2, 6, 23, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .pack-bottom {
+      display: grid;
+      gap: 10px;
+    }
+
+    .color-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .color-strip span:nth-child(1) {
+      background: var(--blue);
+    }
+
+    .color-strip span:nth-child(2) {
+      background: var(--gold);
+    }
+
+    .color-strip span:nth-child(3) {
+      background: var(--green);
+    }
+
+    .pack-small {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .barcode {
+      display: flex;
+      gap: 3px;
+      height: 22px;
+      opacity: 0.72;
+    }
+
+    .barcode i {
+      display: block;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 999px;
+    }
+
+    .barcode i:nth-child(2n) {
+      height: 14px;
+    }
+
+    .barcode i:nth-child(3n) {
+      width: 4px;
+    }
+
+    .tear-line {
+      position: absolute;
+      top: 22%;
+      left: 6%;
+      right: 6%;
+      height: 2px;
+      z-index: 8;
+      transform: scaleX(0);
+      transform-origin: left center;
+      background:
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent),
+        repeating-linear-gradient(90deg, transparent 0 10px, rgba(255, 255, 255, 0.95) 10px 16px);
+      filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.85));
+      opacity: 0;
+    }
+
+    .pack-piece {
+      opacity: 0;
+      z-index: 7;
+      transform: translateZ(32px);
+      pointer-events: none;
+    }
+
+    .piece-top {
+      clip-path: polygon(0 0, 100% 0, 100% 25%, 72% 22%, 52% 26%, 32% 21%, 0 25%);
+      transform-origin: center 20%;
+    }
+
+    .piece-left {
+      clip-path: polygon(0 20%, 52% 25%, 45% 100%, 0 100%);
+      transform-origin: left center;
+    }
+
+    .piece-right {
+      clip-path: polygon(48% 25%, 100% 20%, 100% 100%, 55% 100%);
+      transform-origin: right center;
+    }
+
+    .tap-hint {
+      position: absolute;
+      left: 50%;
+      bottom: -58px;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 14px;
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.86);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(14px);
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0;
+      pointer-events: none;
+    }
+
+    .tap-hint span {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--gold);
+      box-shadow: 0 0 18px var(--gold);
+    }
+
+    .sticker-card {
+      position: absolute;
+      width: min(74vw, 312px);
+      aspect-ratio: 0.68;
+      z-index: 4;
+      opacity: 0;
+      transform-style: preserve-3d;
+      border-radius: 28px;
+      padding: 12px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.7) 12%, rgba(255, 255, 255, 0) 36%),
+        linear-gradient(180deg, #ffffff 0%, #f8fbff 52%, #eef5ff 100%);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.45),
+        0 34px 90px rgba(0, 0, 0, 0.48),
+        0 0 80px rgba(255, 215, 106, 0.22);
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .sticker-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255, 59, 95, 0.18), transparent 20%),
+        radial-gradient(circle at 82% 20%, rgba(47, 128, 255, 0.18), transparent 21%),
+        radial-gradient(circle at 50% 90%, rgba(0, 208, 132, 0.14), transparent 24%);
+      pointer-events: none;
+    }
+
+    .sticker-card::after {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: 20px;
+      border: 1.5px solid rgba(18, 77, 196, 0.08);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+      pointer-events: none;
+    }
+
+    .sticker-shine {
+      position: absolute;
+      top: -30%;
+      left: -85%;
+      z-index: 5;
+      width: 46%;
+      height: 165%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.12),
+        rgba(255, 255, 255, 0.72),
+        rgba(255, 255, 255, 0.18),
+        transparent
+      );
+      transform: rotate(18deg);
+      filter: blur(1px);
+      opacity: 0;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .sticker-graphics {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .sticker-graphics .shape {
+      position: absolute;
+      border-radius: 999px;
+      filter: saturate(1.05);
+    }
+
+    .shape.red-1 {
+      width: 180px;
+      height: 180px;
+      left: -82px;
+      top: 110px;
+      background: radial-gradient(circle at 35% 35%, rgba(255, 59, 95, 0.92), rgba(255, 59, 95, 0.1) 68%, transparent 72%);
+    }
+
+    .shape.blue-1 {
+      width: 230px;
+      height: 230px;
+      right: -120px;
+      top: 84px;
+      background: radial-gradient(circle at 35% 35%, rgba(47, 128, 255, 0.94), rgba(47, 128, 255, 0.12) 70%, transparent 75%);
+    }
+
+    .shape.green-1 {
+      width: 220px;
+      height: 220px;
+      left: -100px;
+      bottom: -92px;
+      background: radial-gradient(circle at 45% 45%, rgba(0, 208, 132, 0.82), rgba(0, 208, 132, 0.08) 70%, transparent 74%);
+    }
+
+    .shape.gold-1 {
+      width: 200px;
+      height: 200px;
+      right: -90px;
+      bottom: -84px;
+      background: radial-gradient(circle at 40% 40%, rgba(255, 183, 3, 0.88), rgba(255, 183, 3, 0.08) 68%, transparent 73%);
+    }
+
+    .arc {
+      position: absolute;
+      border-radius: 999px;
+      border: 12px solid transparent;
+      opacity: 0.95;
+    }
+
+    .arc.a1 {
+      width: 250px;
+      height: 250px;
+      left: -112px;
+      top: 88px;
+      border-top-color: rgba(255, 59, 95, 0.86);
+      border-right-color: rgba(255, 59, 95, 0.72);
+      transform: rotate(8deg);
+    }
+
+    .arc.a2 {
+      width: 280px;
+      height: 280px;
+      right: -140px;
+      top: 58px;
+      border-left-color: rgba(47, 128, 255, 0.9);
+      border-bottom-color: rgba(47, 128, 255, 0.65);
+      transform: rotate(-20deg);
+    }
+
+    .arc.a3 {
+      width: 280px;
+      height: 280px;
+      left: 20px;
+      bottom: -162px;
+      border-top-color: rgba(0, 208, 132, 0.84);
+      border-right-color: rgba(255, 183, 3, 0.82);
+      transform: rotate(12deg);
+    }
+
+    .sticker-inner {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 9px;
+      padding: 10px;
+      border-radius: 20px;
+    }
+
+    .sticker-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+    }
+
+    .album-seal {
+      display: inline-grid;
+      place-items: center;
+      min-width: 102px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(240, 247, 255, 0.82)),
+        radial-gradient(circle at 20% 20%, rgba(255, 215, 106, 0.6), transparent 50%);
+      border: 1px solid rgba(18, 77, 196, 0.16);
+      box-shadow:
+        0 10px 22px rgba(18, 77, 196, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.75);
+      color: #12366e;
+      font-size: 9px;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      line-height: 1.15;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .album-seal span {
+      color: #d32f55;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+    }
+
+    .sticker-mark {
+      color: rgba(25, 64, 125, 0.75);
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-align: right;
+      line-height: 1.15;
+    }
+
+    .photo-frame {
+      position: relative;
+      overflow: hidden;
+      border-radius: 22px;
+      border: 3px solid rgba(255, 255, 255, 0.92);
+      background:
+        radial-gradient(circle at 50% 20%, rgba(47, 128, 255, 0.18), transparent 42%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(240, 246, 255, 0.95));
+      box-shadow:
+        0 16px 34px rgba(18, 77, 196, 0.12),
+        inset 0 0 0 1px rgba(18, 77, 196, 0.08);
+      min-height: 0;
+    }
+
+    .photo-frame::before {
+      content: "";
+      position: absolute;
+      inset: auto 10% 0;
+      height: 42%;
+      border-radius: 50% 50% 0 0;
+      background: radial-gradient(ellipse at center, rgba(255, 215, 106, 0.22), transparent 64%);
+      z-index: 1;
+    }
+
+    .photo-frame img {
+      position: relative;
+      z-index: 2;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.02);
+      filter: contrast(1.04) saturate(1.05);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .photo-frame.loaded img {
+      opacity: 1;
+    }
+
+    .photo-frame.error img {
+      display: none;
+    }
+
+    .photo-error {
+      position: absolute;
+      inset: 16px;
+      z-index: 4;
+      display: none;
+      place-items: center;
+      text-align: center;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px dashed rgba(18, 77, 196, 0.2);
+      color: #21314d;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .photo-frame.error .photo-error {
+      display: grid;
+    }
+
+    .photo-error strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #c6284c;
+      font-size: 13px;
+    }
+
+    .player-info {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 7px;
+      padding: 12px;
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(241, 247, 255, 0.82)),
+        radial-gradient(circle at 50% 0%, rgba(255, 215, 106, 0.22), transparent 62%);
+      border: 1px solid rgba(18, 77, 196, 0.14);
+      box-shadow:
+        0 12px 26px rgba(18, 77, 196, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+      text-align: center;
+    }
+
+    .player-info::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border-radius: 15px;
+      border: 1px solid rgba(18, 77, 196, 0.08);
+      pointer-events: none;
+    }
+
+    .player-info h2 {
+      color: #0e234a;
+      font-size: clamp(24px, 8vw, 32px);
+      line-height: 0.9;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .player-info p {
+      margin: 0;
+    }
+
+    .player-role {
+      color: #174a9e;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .player-team {
+      justify-self: center;
+      min-width: min(100%, 142px);
+      padding: 6px 12px;
+      border-radius: 999px;
+      color: #9d1730;
+      background: rgba(255, 215, 106, 0.3);
+      border: 1px solid rgba(157, 23, 48, 0.12);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .burst {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .burst::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 45%;
+      width: 30px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(255, 215, 106, 0.52), transparent 70%);
+      filter: blur(4px);
+      opacity: 0;
+    }
+
+    .burst.active::before {
+      animation: flash 950ms ease-out both;
+    }
+
+    @keyframes flash {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+      }
+
+      25% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(18);
+      }
+    }
+
+    .ray {
+      position: absolute;
+      left: 50%;
+      top: 45%;
+      width: 6px;
+      height: 260px;
+      transform-origin: center bottom;
+      border-radius: 999px;
+      background: linear-gradient(to top, rgba(255, 215, 106, 0.7), transparent);
+      opacity: 0;
+      filter: blur(2px);
+      mix-blend-mode: screen;
+    }
+
+    .confetti {
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      width: 8px;
+      height: 14px;
+      border-radius: 3px;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    .spark {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      background: white;
+      box-shadow: 0 0 18px white;
+      opacity: 0;
+    }
+
+    .firework {
+      position: absolute;
+      width: 12px;
+      height: 42px;
+      border-radius: 999px 999px 70% 70%;
+      opacity: 0;
+      background:
+        radial-gradient(circle at 50% 18%, #fff7c2 0 16%, currentColor 26%, rgba(255, 89, 0, 0.9) 58%, transparent 78%),
+        linear-gradient(to bottom, rgba(255, 244, 169, 0.95), currentColor 46%, transparent 100%);
+      box-shadow:
+        0 0 24px currentColor,
+        0 0 58px currentColor,
+        0 0 100px rgba(255, 92, 0, 0.85);
+      filter: saturate(1.45) brightness(1.18);
+      mix-blend-mode: screen;
+      transform-origin: center bottom;
+      will-change: transform, opacity;
+    }
+
+    .firework-core {
+      position: absolute;
+      width: 142px;
+      aspect-ratio: 1;
+      border: 2px solid currentColor;
+      border-radius: 999px;
+      opacity: 0;
+      background: radial-gradient(circle, rgba(255, 245, 186, 0.42), rgba(255, 122, 0, 0.16) 38%, transparent 66%);
+      filter:
+        drop-shadow(0 0 24px currentColor)
+        drop-shadow(0 0 62px rgba(255, 95, 0, 0.95));
+      mix-blend-mode: screen;
+      will-change: transform, opacity;
+    }
+
+    @media (min-width: 760px) {
+      :root {
+        --pack-w: min(31vw, 310px, calc((100dvh - 190px) / 1.38));
+        --radius: 30px;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      .page {
+        height: 100dvh;
+        min-height: 0;
+        padding: 92px 28px 18px;
+        overflow: hidden;
+      }
+
+      .app {
+        width: min(100%, 620px);
+        height: 100%;
+        min-height: 0;
+      }
+
+      .stage {
+        height: 100%;
+        min-height: 0;
+      }
+
+      .pack-title {
+        font-size: 46px;
+      }
+
+      .sticker-card {
+        width: min(76vw, 330px, calc((100dvh - 154px) * 0.68));
+      }
+
+      .player-info h2 {
+        font-size: 30px;
+      }
+
+      .tap-hint {
+        bottom: clamp(-70px, -8vh, -54px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="site-nav" aria-label="Navega&ccedil;&atilde;o principal">
+    <div class="site-nav-inner">
+        <a class="site-logo" href="./index.html">TI 2026</a>
+        <div class="site-links">
+          <a class="site-link" href="./index.html">&Aacute;lbum</a>
+          <a class="site-link is-active" href="./abre-pack.html" aria-current="page">Figurinha</a>
+        </div>
+      </div>
+    </nav>
+
+  <div class="page">
+    <div class="stadium" aria-hidden="true">
+      <div class="light left"></div>
+      <div class="light center"></div>
+      <div class="light right"></div>
+      <div class="stadium-line"></div>
+    </div>
+
+    <main class="app">
+      <section class="stage" aria-label="Animação de abertura de pacote">
+        <div class="burst" id="burst"></div>
+
+        <article class="sticker-card" id="stickerCard" aria-live="polite">
+          <div class="sticker-shine" id="stickerShine"></div>
+
+          <div class="sticker-graphics" aria-hidden="true">
+            <span class="shape red-1"></span>
+            <span class="shape blue-1"></span>
+            <span class="shape green-1"></span>
+            <span class="shape gold-1"></span>
+
+            <span class="arc a1"></span>
+            <span class="arc a2"></span>
+            <span class="arc a3"></span>
+          </div>
+
+          <div class="sticker-inner">
+            <div class="sticker-head">
+              <div class="album-seal">
+                Copa 2026
+                <span>T.I Integrado</span>
+              </div>
+
+              <div class="sticker-mark">
+                Collector<br />
+                Edition
+              </div>
+            </div>
+
+            <div class="photo-frame" id="photoFrame">
+              <img id="stickerPhoto" src="" alt="Foto da figurinha" />
+
+              <div class="photo-error" id="photoError">
+                <div>
+                  <strong>Foto não carregou</strong>
+                  Verifique se o caminho da imagem está correto.
+                </div>
+              </div>
+            </div>
+
+            <div class="player-info">
+              <h2 id="playerName">Bruno</h2>
+              <p class="player-role" id="playerRole">Diretor de DI</p>
+              <p class="player-team" id="playerTeam">L&iacute;deres</p>
+            </div>
+          </div>
+        </article>
+
+        <button class="pack-button" id="packButton" type="button" aria-label="Abrir figurinha">
+          <div class="pack-shell" id="packShell">
+            <div class="pack-shadow"></div>
+
+            <div class="pack-base"></div>
+
+            <div class="pack-front" id="packFront">
+              <div class="pack-content">
+                <div class="pack-topline">
+                  <span class="mini-badge"><span></span>Copa 2026</span>
+                  <span>Premium</span>
+                </div>
+
+                <div class="pack-center">
+                  <div class="world-ball" aria-hidden="true"></div>
+
+                  <div class="pack-title">
+                    World
+                    <strong>Pack</strong>
+                  </div>
+
+                  <div class="pack-subtitle">T.I Integrado Edition</div>
+                </div>
+
+                <div class="pack-bottom">
+                  <div class="color-strip">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+
+                  <div class="pack-small">
+                    <span>1 figurinha especial</span>
+
+                    <div class="barcode" aria-hidden="true">
+                      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                      <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pack-piece piece-top"></div>
+            <div class="pack-piece piece-left"></div>
+            <div class="pack-piece piece-right"></div>
+
+            <div class="tear-line" id="tearLine"></div>
+
+            <div class="tap-hint" id="tapHint">
+              <span></span>
+              Toque para abrir
+            </div>
+          </div>
+        </button>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const CONFIG = {
+      fotoFigurinha: "./assets/22684a6b-fd58-4520-ad41-1d55cf9ffd68.jpg",
+      audioAbertura: "./assets/WhatsApp%20Video%202026-05-28%20at%2016.10.52.mp4",
+      nomeJogador: "Bruno",
+      cargoJogador: "Diretor de DI",
+      timeJogador: "L\u00edderes"
+    };
+
+    const packButton = document.querySelector("#packButton");
+    const packShell = document.querySelector("#packShell");
+    const packFront = document.querySelector("#packFront");
+    const stickerCard = document.querySelector("#stickerCard");
+    const stickerShine = document.querySelector("#stickerShine");
+    const stickerPhoto = document.querySelector("#stickerPhoto");
+    const photoFrame = document.querySelector("#photoFrame");
+    const photoError = document.querySelector("#photoError");
+    const playerName = document.querySelector("#playerName");
+    const playerRole = document.querySelector("#playerRole");
+    const playerTeam = document.querySelector("#playerTeam");
+    const tapHint = document.querySelector("#tapHint");
+    const tearLine = document.querySelector("#tearLine");
+    const burst = document.querySelector("#burst");
+    const pieces = gsap.utils.toArray(".pack-piece");
+    const stickerOpenAudio = new Audio(CONFIG.audioAbertura);
+    stickerOpenAudio.preload = "auto";
+    stickerOpenAudio.loop = false;
+
+    let opened = false;
+    let stickerAudioPlayed = false;
+
+    function encodeFilePath(path) {
+      return encodeURI(path).replace(/#/g, "%23");
+    }
+
+    function normalizeImagePath(path) {
+      let imagePath = String(path || "").trim();
+
+      if (!imagePath) return "";
+
+      imagePath = imagePath.replaceAll("\\", "/");
+
+      return encodeFilePath(imagePath);
+    }
+
+    function applyConfig() {
+      const imagePath = normalizeImagePath(CONFIG.fotoFigurinha);
+
+      playerName.textContent = CONFIG.nomeJogador;
+      playerRole.textContent = CONFIG.cargoJogador;
+      playerTeam.textContent = CONFIG.timeJogador;
+
+      photoFrame.classList.remove("loaded", "error");
+
+      stickerPhoto.onload = function () {
+        photoFrame.classList.add("loaded");
+        photoFrame.classList.remove("error");
+      };
+
+      stickerPhoto.onerror = function () {
+        photoFrame.classList.add("error");
+        photoFrame.classList.remove("loaded");
+
+        photoError.innerHTML = `
+          <div>
+            <strong>Foto não carregou</strong>
+            Caminho usado:<br>
+            <span style="word-break: break-word;">${imagePath || "vazio"}</span>
+          </div>
+        `;
+
+        console.error("A imagem da figurinha não carregou. Caminho usado:", imagePath);
+      };
+
+      if (!imagePath) {
+        stickerPhoto.onerror();
+        return;
+      }
+
+      stickerPhoto.src = imagePath;
+    }
+
+    function createRays() {
+      const total = 18;
+
+      for (let i = 0; i < total; i++) {
+        const ray = document.createElement("span");
+        ray.className = "ray";
+        ray.style.transform = `translate(-50%, -100%) rotate(${(360 / total) * i}deg)`;
+        burst.appendChild(ray);
+      }
+    }
+
+    function createConfetti() {
+      const colors = ["#ffd76a", "#ff3b5f", "#2f80ff", "#00d084", "#ffffff"];
+      const total = 90;
+
+      for (let i = 0; i < total; i++) {
+        const piece = document.createElement("span");
+        piece.className = "confetti";
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        burst.appendChild(piece);
+
+        const angle = Math.random() * Math.PI * 2;
+        const distance = gsap.utils.random(100, 360);
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance - gsap.utils.random(40, 180);
+
+        gsap.fromTo(
+          piece,
+          {
+            x: 0,
+            y: 0,
+            scale: gsap.utils.random(0.6, 1.4),
+            rotation: gsap.utils.random(-120, 120),
+            opacity: 1
+          },
+          {
+            x,
+            y,
+            rotation: gsap.utils.random(280, 980),
+            opacity: 0,
+            duration: gsap.utils.random(1.35, 2.4),
+            ease: "power3.out",
+            onComplete: function () {
+              piece.remove();
+            }
+          }
+        );
+      }
+    }
+
+    function createSparks() {
+      const total = 36;
+
+      for (let i = 0; i < total; i++) {
+        const spark = document.createElement("span");
+        spark.className = "spark";
+        burst.appendChild(spark);
+
+        const angle = Math.random() * Math.PI * 2;
+        const distance = gsap.utils.random(60, 280);
+
+        gsap.fromTo(
+          spark,
+          {
+            left: "50%",
+            top: "45%",
+            x: 0,
+            y: 0,
+            scale: 0,
+            opacity: 1
+          },
+          {
+            x: Math.cos(angle) * distance,
+            y: Math.sin(angle) * distance,
+            scale: gsap.utils.random(0.7, 1.8),
+            opacity: 0,
+            duration: gsap.utils.random(0.7, 1.35),
+            ease: "power2.out",
+            onComplete: function () {
+              spark.remove();
+            }
+          }
+        );
+      }
+    }
+
+    function createSideFireworks() {
+      const colors = ["#fff0a6", "#ffd76a", "#ff9f1c", "#ff5a1f", "#ff2f1f"];
+      const origins = [
+        { left: "16%", top: "38%" },
+        { left: "84%", top: "38%" },
+        { left: "22%", top: "58%" },
+        { left: "78%", top: "58%" },
+        { left: "12%", top: "50%" },
+        { left: "88%", top: "50%" }
+      ];
+
+      origins.forEach(function (origin, originIndex) {
+        const core = document.createElement("span");
+        const coreColor = colors[originIndex % colors.length];
+        core.className = "firework-core";
+        core.style.left = origin.left;
+        core.style.top = origin.top;
+        core.style.color = coreColor;
+        burst.appendChild(core);
+
+        gsap.fromTo(
+          core,
+          {
+            xPercent: -50,
+            yPercent: -50,
+            scale: 0.12,
+            opacity: 0.95
+          },
+          {
+            scale: 1.65,
+            opacity: 0,
+            duration: 1.05,
+            delay: originIndex * 0.08,
+            ease: "power2.out",
+            onComplete: function () {
+              core.remove();
+            }
+          }
+        );
+
+        for (let i = 0; i < 34; i++) {
+          const firework = document.createElement("span");
+          const color = colors[(i + originIndex) % colors.length];
+          firework.className = "firework";
+          firework.style.left = origin.left;
+          firework.style.top = origin.top;
+          firework.style.background = color;
+          firework.style.color = color;
+          burst.appendChild(firework);
+
+          const angle = Math.random() * Math.PI * 2;
+          const distance = gsap.utils.random(92, 245);
+
+          gsap.fromTo(
+            firework,
+            {
+              x: 0,
+              y: 0,
+              scale: 0,
+              rotation: (angle * 180) / Math.PI,
+              opacity: 1
+            },
+          {
+            x: Math.cos(angle) * distance,
+            y: Math.sin(angle) * distance - gsap.utils.random(8, 46),
+            scale: gsap.utils.random(0.72, 1.65),
+            rotation: (angle * 180) / Math.PI + gsap.utils.random(-95, 95),
+            opacity: 0,
+            duration: gsap.utils.random(1.15, 1.9),
+            delay: originIndex * 0.08,
+            ease: "expo.out",
+            onComplete: function () {
+              firework.remove();
+            }
+            }
+          );
+        }
+      });
+    }
+
+    function resetInitialAnimationState() {
+      opened = false;
+      packButton.disabled = false;
+      burst.classList.remove("active");
+
+      gsap.set(packButton, {
+        autoAlpha: 1,
+        scale: 1,
+        x: 0,
+        y: 0,
+        rotation: 0,
+        rotationX: 0,
+        rotationY: 0
+      });
+
+      gsap.set(packShell, {
+        autoAlpha: 1,
+        scale: 1,
+        x: 0,
+        y: 0,
+        rotation: 0,
+        rotationX: 0,
+        rotationY: 0,
+        transformPerspective: 1000
+      });
+
+      gsap.set(packFront, {
+        autoAlpha: 1,
+        scale: 1,
+        x: 0,
+        y: 0,
+        rotation: 0,
+        rotationX: 0,
+        rotationY: 0
+      });
+
+      gsap.set(pieces, {
+        autoAlpha: 0,
+        x: 0,
+        y: 0,
+        rotation: 0,
+        rotationX: 0,
+        rotationY: 0,
+        scale: 1
+      });
+
+      gsap.set(tearLine, {
+        autoAlpha: 0,
+        scaleX: 0
+      });
+
+      gsap.set(tapHint, {
+        autoAlpha: 1,
+        y: 0
+      });
+
+      gsap.set(stickerCard, {
+        autoAlpha: 0,
+        y: 190,
+        scale: 0.1,
+        rotation: -1260,
+        rotationX: 78,
+        rotationY: -420,
+        filter: "blur(16px)",
+        transformPerspective: 1200,
+        transformOrigin: "50% 50%"
+      });
+
+      gsap.set(stickerShine, {
+        x: "-180%",
+        opacity: 0
+      });
+
+      gsap.set(".ray", {
+        opacity: 0,
+        scaleY: 0.2
+      });
+    }
+
+    function startIdlePackAnimation() {
+      gsap.to(packShell, {
+        y: -8,
+        rotationY: 4,
+        duration: 2.3,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".world-ball", {
+        rotation: 360,
+        duration: 12,
+        repeat: -1,
+        ease: "none"
+      });
+    }
+
+    function playStickerShine() {
+      gsap.killTweensOf(stickerShine);
+      gsap.fromTo(
+        stickerShine,
+        {
+          x: "-180%",
+          opacity: 0
+        },
+        {
+          x: "420%",
+          opacity: 1,
+          duration: 1.05,
+          ease: "power2.inOut",
+          repeat: 1,
+          repeatDelay: 0.45,
+          yoyo: false,
+          onComplete: function () {
+            gsap.set(stickerShine, {
+              opacity: 0,
+              x: "-180%"
+            });
+          }
+        }
+      );
+    }
+
+    function loopStickerShine() {
+      gsap.killTweensOf(stickerShine);
+      gsap.fromTo(
+        stickerShine,
+        {
+          x: "-190%",
+          opacity: 0
+        },
+        {
+          x: "430%",
+          opacity: 0.92,
+          duration: 1.35,
+          ease: "power2.inOut",
+          repeat: -1,
+          repeatDelay: 1.15,
+          onRepeat: function () {
+            gsap.set(stickerShine, {
+              opacity: 0,
+              x: "-190%"
+            });
+          }
+        }
+      );
+    }
+
+    function playStickerOpenAudio() {
+      if (stickerAudioPlayed) return;
+
+      stickerAudioPlayed = true;
+      stickerOpenAudio.currentTime = 0;
+      stickerOpenAudio.play().catch(function () {});
+    }
+
+    function openPack() {
+      if (opened) return;
+
+      opened = true;
+      packButton.disabled = true;
+      playStickerOpenAudio();
+
+      gsap.killTweensOf(packShell);
+      gsap.killTweensOf(stickerCard);
+
+      const tl = gsap.timeline({
+        defaults: {
+          ease: "power3.out"
+        }
+      });
+
+      tl.to(tapHint, {
+        autoAlpha: 0,
+        y: 10,
+        duration: 0.22
+      });
+
+      tl.to(packShell, {
+        y: -8,
+        rotation: 2,
+        duration: 0.12,
+        repeat: 7,
+        yoyo: true,
+        ease: "power1.inOut"
+      });
+
+      tl.to(packShell, {
+        scale: 1.05,
+        rotationX: 8,
+        duration: 0.28,
+        ease: "back.out(2)"
+      });
+
+      tl.to(tearLine, {
+        autoAlpha: 1,
+        scaleX: 1,
+        duration: 0.42,
+        ease: "power4.out"
+      });
+
+      tl.to(packShell, {
+        rotation: -3,
+        x: -6,
+        duration: 0.08,
+        repeat: 5,
+        yoyo: true,
+        ease: "power1.inOut"
+      });
+
+      tl.set(pieces, {
+        autoAlpha: 1
+      });
+
+      tl.to(packFront, {
+        autoAlpha: 0,
+        scale: 0.98,
+        duration: 0.08
+      });
+
+      tl.add(function () {
+        burst.classList.remove("active");
+        void burst.offsetWidth;
+        burst.classList.add("active");
+        createConfetti();
+        createSparks();
+      });
+
+      tl.to(".ray", {
+        opacity: 0.65,
+        scaleY: 1,
+        duration: 0.5,
+        stagger: 0.018,
+        ease: "power2.out"
+      }, "<");
+
+      tl.to(".piece-top", {
+        y: -180,
+        x: 12,
+        rotation: -18,
+        rotationX: -50,
+        scale: 0.98,
+        duration: 0.72,
+        ease: "power4.out"
+      }, "<");
+
+      tl.to(".piece-left", {
+        x: -170,
+        y: 42,
+        rotation: -24,
+        rotationY: -68,
+        duration: 0.82,
+        ease: "power4.out"
+      }, "<0.05");
+
+      tl.to(".piece-right", {
+        x: 170,
+        y: 44,
+        rotation: 24,
+        rotationY: 68,
+        duration: 0.82,
+        ease: "power4.out"
+      }, "<");
+
+      tl.to(packShell, {
+        y: 82,
+        scale: 0.84,
+        opacity: 0,
+        rotationX: -10,
+        duration: 0.82,
+        ease: "power3.out"
+      }, "<0.04");
+
+      tl.set(stickerCard, {
+        autoAlpha: 1,
+        y: 150,
+        scale: 0.12,
+        rotation: -1260,
+        rotationX: 78,
+        rotationY: -420,
+        filter: "blur(16px)"
+      }, "<0.14");
+
+      tl.to(stickerCard, {
+        y: 96,
+        scale: 0.28,
+        rotation: -900,
+        rotationX: 62,
+        rotationY: -300,
+        filter: "blur(13px)",
+        duration: 0.7,
+        ease: "power2.out"
+      }, "<0.1");
+
+      tl.to(stickerCard, {
+        y: 32,
+        scale: 0.62,
+        rotation: -405,
+        rotationX: 38,
+        rotationY: -155,
+        filter: "blur(8px)",
+        duration: 0.95,
+        ease: "power2.inOut"
+      });
+
+      tl.to(stickerCard, {
+        y: -12,
+        scale: 1,
+        rotation: 0,
+        rotationX: 0,
+        rotationY: 0,
+        filter: "blur(0px)",
+        duration: 1.15,
+        ease: "back.out(1.45)"
+      });
+
+      tl.add(createSideFireworks, ">-0.05");
+
+      tl.add(playStickerShine, "-=0.25");
+
+      tl.to(".ray", {
+        opacity: 0,
+        scaleY: 0.4,
+        duration: 0.8,
+        stagger: 0.01,
+        ease: "power2.out"
+      }, "-=0.35");
+
+      tl.add(function () {
+        gsap.to(stickerCard, {
+          y: -16,
+          duration: 1.4,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        });
+        loopStickerShine();
+      });
+    }
+
+    applyConfig();
+    createRays();
+    resetInitialAnimationState();
+    startIdlePackAnimation();
+
+    packButton.addEventListener("click", openPack);
+  </script>
+</body>
+</html>
