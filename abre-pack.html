@@ -7,7 +7,6 @@
   <title>Figurinha - Copa 2026</title>
 
   <script src="./assets/gsap.min.js"></script>
-  <link rel="stylesheet" href="./shared-nav.css?v=20260528-nav" />
 
   <style>
     :root {
@@ -53,7 +52,7 @@
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 76px 12px 30px;
+      padding: 20px 12px 30px;
       overflow-x: hidden;
       overflow-y: auto;
       background:
@@ -511,7 +510,7 @@
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 0;
-      pointer-events: none;
+      pointer-events: auto;
     }
 
     .tap-hint span {
@@ -767,6 +766,46 @@
       opacity: 1;
     }
 
+    .photo-fallback {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      gap: 6px;
+      padding: 16px;
+      text-align: center;
+      color: rgba(18, 54, 110, 0.72);
+      background:
+        radial-gradient(circle at 50% 34%, rgba(255, 255, 255, 0.82), transparent 16%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(47, 128, 255, 0.1));
+    }
+
+    .photo-fallback strong {
+      display: grid;
+      place-items: center;
+      width: 68px;
+      aspect-ratio: 1;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+      color: #174a9e;
+      font-size: 22px;
+      font-weight: 950;
+      box-shadow: inset 0 -8px 18px rgba(18, 77, 196, 0.1);
+    }
+
+    .photo-fallback span {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .photo-frame.loaded .photo-fallback,
+    .photo-frame.error .photo-fallback {
+      display: none;
+    }
+
     .photo-frame.error img {
       display: none;
     }
@@ -836,14 +875,6 @@
       margin: 0;
     }
 
-    .player-role {
-      color: #174a9e;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
     .player-team {
       justify-self: center;
       min-width: min(100%, 142px);
@@ -856,6 +887,182 @@
       font-weight: 950;
       letter-spacing: 0.14em;
       text-transform: uppercase;
+    }
+
+    .pack-results {
+      --result-gap: clamp(8px, 1.6vw, 12px);
+      position: absolute;
+      z-index: 5;
+      width: min(92vw, 520px, calc((100dvh - 120px - var(--result-gap)) * 0.68 + var(--result-gap)));
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--result-gap);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(30px) scale(0.88);
+    }
+
+    .pack-results.is-visible {
+      pointer-events: auto;
+    }
+
+    .pack-results .sticker-card {
+      position: relative;
+      width: 100%;
+      opacity: 1;
+      border-radius: 18px;
+      padding: 7px;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.42),
+        0 16px 42px rgba(0, 0, 0, 0.34),
+        0 0 34px rgba(255, 215, 106, 0.14);
+      transform: none;
+      pointer-events: auto;
+    }
+
+    .pack-results .sticker-card::after {
+      inset: 6px;
+      border-radius: 14px;
+    }
+
+    .pack-results .sticker-inner {
+      gap: 5px;
+      padding: 5px;
+      border-radius: 14px;
+    }
+
+    .pack-results .sticker-head {
+      min-height: 24px;
+      gap: 5px;
+    }
+
+    .pack-results .album-seal {
+      min-width: 66px;
+      padding: 5px 7px;
+      font-size: 6px;
+      letter-spacing: 0.1em;
+    }
+
+    .pack-results .album-seal span {
+      font-size: 5px;
+    }
+
+    .pack-results .sticker-mark {
+      font-size: 6px;
+      letter-spacing: 0.1em;
+    }
+
+    .pack-results .photo-frame {
+      border-width: 2px;
+      border-radius: 14px;
+    }
+
+    .pack-results .photo-error {
+      inset: 8px;
+      padding: 8px;
+      border-radius: 12px;
+      font-size: 9px;
+    }
+
+    .pack-results .photo-fallback {
+      padding: 8px;
+    }
+
+    .pack-results .photo-fallback strong {
+      width: 42px;
+      font-size: 15px;
+    }
+
+    .pack-results .photo-fallback span {
+      font-size: 7px;
+    }
+
+    .pack-results .player-info {
+      gap: 3px;
+      padding: 7px;
+      border-radius: 13px;
+    }
+
+    .pack-results .player-info::before {
+      inset: 4px;
+      border-radius: 10px;
+    }
+
+    .pack-results .player-info h2 {
+      font-size: clamp(13px, 2.5vw, 19px);
+      line-height: 0.92;
+    }
+
+    .pack-results .player-team {
+      min-width: 0;
+      padding: 4px 7px;
+      font-size: clamp(7px, 1.3vw, 9px);
+      letter-spacing: 0.1em;
+    }
+
+    .album-link {
+      position: fixed;
+      right: clamp(14px, 4vw, 28px);
+      bottom: clamp(14px, 4vh, 26px);
+      z-index: 12;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 215, 106, 0.46);
+      background:
+        linear-gradient(180deg, rgba(255, 215, 106, 0.98), rgba(255, 183, 3, 0.94));
+      color: #11213f;
+      box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.34),
+        0 0 34px rgba(255, 215, 106, 0.24);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      text-transform: uppercase;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(16px) scale(0.94);
+      transition:
+        opacity 240ms ease,
+        transform 240ms ease,
+        box-shadow 240ms ease;
+    }
+
+    .album-link.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    .album-link:hover {
+      box-shadow:
+        0 20px 46px rgba(0, 0, 0, 0.38),
+        0 0 42px rgba(255, 215, 106, 0.34);
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    @media (max-width: 759px) {
+      .album-link {
+        top: auto;
+        right: auto;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+        left: 50%;
+        min-height: 42px;
+        padding: 12px 16px;
+        transform: translate(-50%, -10px) scale(0.94);
+      }
+
+      .album-link.is-visible {
+        transform: translate(-50%, 0) scale(1);
+      }
+
+      .album-link:hover {
+        transform: translate(-50%, -2px) scale(1.02);
+      }
     }
 
     .burst {
@@ -971,7 +1178,7 @@
 
     @media (min-width: 760px) {
       :root {
-        --pack-w: min(31vw, 310px, calc((100dvh - 190px) / 1.38));
+        --pack-w: min(36vw, 30rem, calc((100dvh - 100px) / 1.38));
         --radius: 30px;
       }
 
@@ -983,12 +1190,12 @@
       .page {
         height: 100dvh;
         min-height: 0;
-        padding: 92px 28px 18px;
+        padding: 20px 28px 18px;
         overflow: hidden;
       }
 
       .app {
-        width: min(100%, 620px);
+        width: min(100%, 860px);
         height: 100%;
         min-height: 0;
       }
@@ -1011,7 +1218,7 @@
       }
 
       .tap-hint {
-        bottom: clamp(-70px, -8vh, -54px);
+        bottom: clamp(-48px, -5vh, -34px);
       }
     }
 
@@ -1028,16 +1235,6 @@
 </head>
 
 <body>
-  <nav class="site-nav" aria-label="Navega&ccedil;&atilde;o principal">
-    <div class="site-nav-inner">
-        <a class="site-logo" href="./index.html">TI 2026</a>
-        <div class="site-links">
-          <a class="site-link" href="./index.html">&Aacute;lbum</a>
-          <a class="site-link is-active" href="./abre-pack.html" aria-current="page">Figurinha</a>
-        </div>
-      </div>
-    </nav>
-
   <div class="page">
     <div class="stadium" aria-hidden="true">
       <div class="light left"></div>
@@ -1079,6 +1276,10 @@
 
             <div class="photo-frame" id="photoFrame">
               <img id="stickerPhoto" src="" alt="Foto da figurinha" />
+              <div class="photo-fallback" id="photoFallback" aria-hidden="true">
+                <strong>TI</strong>
+                <span>Foto em breve</span>
+              </div>
 
               <div class="photo-error" id="photoError">
                 <div>
@@ -1089,12 +1290,13 @@
             </div>
 
             <div class="player-info">
-              <h2 id="playerName">Bruno</h2>
-              <p class="player-role" id="playerRole">Diretor de DI</p>
-              <p class="player-team" id="playerTeam">L&iacute;deres</p>
+              <h2 id="playerName">Figurinha 01</h2>
+              <p class="player-team" id="playerTeam">Novo pack</p>
             </div>
           </div>
         </article>
+
+        <div class="pack-results" id="packResults" aria-live="polite" aria-label="Figurinhas reveladas"></div>
 
         <button class="pack-button" id="packButton" type="button" aria-label="Abrir figurinha">
           <div class="pack-shell" id="packShell">
@@ -1128,7 +1330,7 @@
                   </div>
 
                   <div class="pack-small">
-                    <span>1 figurinha especial</span>
+                    <span>4 figurinhas especiais</span>
 
                     <div class="barcode" aria-hidden="true">
                       <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
@@ -1153,15 +1355,35 @@
         </button>
       </section>
     </main>
+
+    <a class="album-link" id="albumLink" href="./album.html">Ver &aacute;lbum</a>
   </div>
 
   <script>
     const CONFIG = {
-      fotoFigurinha: "./assets/22684a6b-fd58-4520-ad41-1d55cf9ffd68.jpg",
       audioAbertura: "./assets/WhatsApp%20Video%202026-05-28%20at%2016.10.52.mp4",
-      nomeJogador: "Bruno",
-      cargoJogador: "Diretor de DI",
-      timeJogador: "L\u00edderes"
+      figurinhas: [
+        {
+          nome: "Miguel",
+          time: "AI Lab",
+          foto: "./assets/pack-001-miguel.jpg"
+        },
+        {
+          nome: "Carlos",
+          time: "Central",
+          foto: "./assets/pack-001-carlos.jpg"
+        },
+        {
+          nome: "Vand\u00e3o",
+          time: "ERP",
+          foto: "./assets/pack-001-vandao.jpg"
+        },
+        {
+          nome: "Gustavo",
+          time: "Dados",
+          foto: "./assets/pack-001-gustavo.jpg"
+        }
+      ]
     };
 
     const packButton = document.querySelector("#packButton");
@@ -1172,8 +1394,10 @@
     const stickerPhoto = document.querySelector("#stickerPhoto");
     const photoFrame = document.querySelector("#photoFrame");
     const photoError = document.querySelector("#photoError");
+    const photoFallback = document.querySelector("#photoFallback");
+    const packResults = document.querySelector("#packResults");
+    const albumLink = document.querySelector("#albumLink");
     const playerName = document.querySelector("#playerName");
-    const playerRole = document.querySelector("#playerRole");
     const playerTeam = document.querySelector("#playerTeam");
     const tapHint = document.querySelector("#tapHint");
     const tearLine = document.querySelector("#tearLine");
@@ -1200,41 +1424,150 @@
       return encodeFilePath(imagePath);
     }
 
-    function applyConfig() {
-      const imagePath = normalizeImagePath(CONFIG.fotoFigurinha);
+    function normalizeSticker(sticker, index) {
+      return {
+        nome: sticker?.nome || `Figurinha ${String(index + 1).padStart(2, "0")}`,
+        time: sticker?.time || "Novo pack",
+        foto: sticker?.foto || ""
+      };
+    }
 
-      playerName.textContent = CONFIG.nomeJogador;
-      playerRole.textContent = CONFIG.cargoJogador;
-      playerTeam.textContent = CONFIG.timeJogador;
+    function getPackStickers() {
+      return Array.from({ length: 4 }, function (_, index) {
+        return normalizeSticker(CONFIG.figurinhas?.[index], index);
+      });
+    }
 
-      photoFrame.classList.remove("loaded", "error");
+    function applyPhoto(frame, image, errorBox, sticker) {
+      const imagePath = normalizeImagePath(sticker.foto);
 
-      stickerPhoto.onload = function () {
-        photoFrame.classList.add("loaded");
-        photoFrame.classList.remove("error");
+      frame.classList.remove("loaded", "error", "placeholder");
+      errorBox.removeAttribute("style");
+      image.removeAttribute("src");
+      image.alt = sticker.nome ? `Foto de ${sticker.nome}` : "Foto da figurinha";
+
+      if (!imagePath) {
+        frame.classList.add("placeholder");
+        return;
+      }
+
+      image.onload = function () {
+        frame.classList.add("loaded");
+        frame.classList.remove("error", "placeholder");
       };
 
-      stickerPhoto.onerror = function () {
-        photoFrame.classList.add("error");
-        photoFrame.classList.remove("loaded");
+      image.onerror = function () {
+        frame.classList.add("error");
+        frame.classList.remove("loaded", "placeholder");
 
-        photoError.innerHTML = `
+        errorBox.innerHTML = `
           <div>
-            <strong>Foto não carregou</strong>
+            <strong>Foto nÃ£o carregou</strong>
             Caminho usado:<br>
             <span style="word-break: break-word;">${imagePath || "vazio"}</span>
           </div>
         `;
 
-        console.error("A imagem da figurinha não carregou. Caminho usado:", imagePath);
+        console.error("A imagem da figurinha nÃ£o carregou. Caminho usado:", imagePath);
       };
 
-      if (!imagePath) {
-        stickerPhoto.onerror();
-        return;
-      }
+      image.src = imagePath;
+    }
 
-      stickerPhoto.src = imagePath;
+    function applySticker(index) {
+      const sticker = getPackStickers()[index];
+
+      playerName.textContent = sticker.nome;
+      playerTeam.textContent = sticker.time;
+      applyPhoto(photoFrame, stickerPhoto, photoError, sticker);
+    }
+
+    function renderStickerCard(sticker, index) {
+      const imagePath = normalizeImagePath(sticker.foto);
+      const imageMarkup = imagePath
+        ? `<img class="result-photo" src="${imagePath}" alt="Foto de ${sticker.nome}" />`
+        : "";
+      const frameClass = imagePath ? "photo-frame" : "photo-frame placeholder";
+
+      return `
+        <article class="sticker-card result-card" aria-label="${sticker.nome}">
+          <div class="sticker-shine"></div>
+          <div class="sticker-graphics" aria-hidden="true">
+            <span class="shape red-1"></span>
+            <span class="shape blue-1"></span>
+            <span class="shape green-1"></span>
+            <span class="shape gold-1"></span>
+            <span class="arc a1"></span>
+            <span class="arc a2"></span>
+            <span class="arc a3"></span>
+          </div>
+          <div class="sticker-inner">
+            <div class="sticker-head">
+              <div class="album-seal">
+                Copa 2026
+                <span>${String(index + 1).padStart(2, "0")} / 04</span>
+              </div>
+              <div class="sticker-mark">
+                Pack<br />
+                Reveal
+              </div>
+            </div>
+            <div class="${frameClass}">
+              ${imageMarkup}
+              <div class="photo-fallback" aria-hidden="true">
+                <strong>TI</strong>
+                <span>Foto em breve</span>
+              </div>
+              <div class="photo-error">
+                <div>
+                  <strong>Foto nÃ£o carregou</strong>
+                  Verifique o arquivo.
+                </div>
+              </div>
+            </div>
+            <div class="player-info">
+              <h2>${sticker.nome}</h2>
+              <p class="player-team">${sticker.time}</p>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderPackResults() {
+      const stickers = getPackStickers();
+      packResults.innerHTML = stickers.map(renderStickerCard).join("");
+
+      packResults.querySelectorAll(".result-photo").forEach(function (image) {
+        const frame = image.closest(".photo-frame");
+        const errorBox = frame.querySelector(".photo-error");
+
+        image.addEventListener("load", function () {
+          frame.classList.add("loaded");
+          frame.classList.remove("error", "placeholder");
+        });
+
+        image.addEventListener("error", function () {
+          frame.classList.add("error");
+          frame.classList.remove("loaded", "placeholder");
+          errorBox.style.display = "grid";
+        });
+
+        if (image.complete && image.naturalWidth > 0) {
+          frame.classList.add("loaded");
+        }
+      });
+    }
+
+    function preloadPackImages() {
+      getPackStickers().forEach(function (sticker) {
+        const imagePath = normalizeImagePath(sticker.foto);
+
+        if (!imagePath) return;
+
+        const image = new Image();
+        image.src = imagePath;
+      });
     }
 
     function createRays() {
@@ -1407,6 +1740,15 @@
       opened = false;
       packButton.disabled = false;
       burst.classList.remove("active");
+      packResults.innerHTML = "";
+      packResults.classList.remove("is-visible");
+      albumLink.classList.remove("is-visible");
+
+      gsap.set(packResults, {
+        autoAlpha: 0,
+        y: 30,
+        scale: 0.88
+      });
 
       gsap.set(packButton, {
         autoAlpha: 1,
@@ -1551,6 +1893,115 @@
       );
     }
 
+    function loopResultShines() {
+      const shines = packResults.querySelectorAll(".sticker-shine");
+
+      gsap.killTweensOf(shines);
+
+      shines.forEach(function (shine, index) {
+        gsap.fromTo(
+          shine,
+          {
+            x: "-190%",
+            opacity: 0
+          },
+          {
+            x: "430%",
+            opacity: 0.72,
+            duration: 1.15,
+            delay: index * 0.18,
+            ease: "power2.inOut",
+            repeat: -1,
+            repeatDelay: 1.8,
+            onRepeat: function () {
+              gsap.set(shine, {
+                opacity: 0,
+                x: "-190%"
+              });
+            }
+          }
+        );
+      });
+    }
+
+    function prepareStickerReveal(index) {
+      applySticker(index);
+      gsap.killTweensOf(stickerShine);
+      gsap.set(stickerShine, {
+        x: "-180%",
+        opacity: 0
+      });
+    }
+
+    function addStickerReveal(tl, index, total) {
+      const isLast = index === total - 1;
+
+      tl.add(function () {
+        prepareStickerReveal(index);
+      });
+
+      tl.set(stickerCard, {
+        autoAlpha: 1,
+        y: 150,
+        scale: 0.12,
+        rotation: -1260,
+        rotationX: 78,
+        rotationY: -420,
+        filter: "blur(16px)"
+      });
+
+      tl.to(stickerCard, {
+        y: 96,
+        scale: 0.28,
+        rotation: -900,
+        rotationX: 62,
+        rotationY: -300,
+        filter: "blur(13px)",
+        duration: 0.55,
+        ease: "power2.out"
+      });
+
+      tl.to(stickerCard, {
+        y: 32,
+        scale: 0.62,
+        rotation: -405,
+        rotationX: 38,
+        rotationY: -155,
+        filter: "blur(8px)",
+        duration: 0.72,
+        ease: "power2.inOut"
+      });
+
+      tl.to(stickerCard, {
+        y: -12,
+        scale: 1,
+        rotation: 0,
+        rotationX: 0,
+        rotationY: 0,
+        filter: "blur(0px)",
+        duration: 0.88,
+        ease: "back.out(1.45)"
+      });
+
+      tl.add(createSparks, "-=0.2");
+      tl.add(playStickerShine, "-=0.18");
+
+      if (isLast) {
+        tl.add(createSideFireworks, ">-0.02");
+        return;
+      }
+
+      tl.to(stickerCard, {
+        autoAlpha: 0,
+        y: -96,
+        scale: 0.58,
+        rotation: 16,
+        filter: "blur(6px)",
+        duration: 0.42,
+        ease: "power2.in"
+      }, "+=0.18");
+    }
+
     function playStickerOpenAudio() {
       if (stickerAudioPlayed) return;
 
@@ -1562,12 +2013,21 @@
     function openPack() {
       if (opened) return;
 
+      const stickers = getPackStickers();
+
       opened = true;
       packButton.disabled = true;
       playStickerOpenAudio();
 
       gsap.killTweensOf(packShell);
       gsap.killTweensOf(stickerCard);
+      gsap.killTweensOf(stickerShine);
+      gsap.killTweensOf(packResults);
+      gsap.killTweensOf(packResults.querySelectorAll(".sticker-shine"));
+
+      packResults.innerHTML = "";
+      packResults.classList.remove("is-visible");
+      albumLink.classList.remove("is-visible");
 
       const tl = gsap.timeline({
         defaults: {
@@ -1676,52 +2136,18 @@
         ease: "power3.out"
       }, "<0.04");
 
-      tl.set(stickerCard, {
-        autoAlpha: 1,
-        y: 150,
-        scale: 0.12,
-        rotation: -1260,
-        rotationX: 78,
-        rotationY: -420,
-        filter: "blur(16px)"
-      }, "<0.14");
-
-      tl.to(stickerCard, {
-        y: 96,
-        scale: 0.28,
-        rotation: -900,
-        rotationX: 62,
-        rotationY: -300,
-        filter: "blur(13px)",
-        duration: 0.7,
-        ease: "power2.out"
-      }, "<0.1");
-
-      tl.to(stickerCard, {
-        y: 32,
-        scale: 0.62,
-        rotation: -405,
-        rotationX: 38,
-        rotationY: -155,
-        filter: "blur(8px)",
-        duration: 0.95,
-        ease: "power2.inOut"
+      stickers.forEach(function (_, index) {
+        addStickerReveal(tl, index, stickers.length);
       });
 
       tl.to(stickerCard, {
-        y: -12,
-        scale: 1,
-        rotation: 0,
-        rotationX: 0,
-        rotationY: 0,
-        filter: "blur(0px)",
-        duration: 1.15,
-        ease: "back.out(1.45)"
-      });
-
-      tl.add(createSideFireworks, ">-0.05");
-
-      tl.add(playStickerShine, "-=0.25");
+        autoAlpha: 0,
+        y: -72,
+        scale: 0.72,
+        filter: "blur(5px)",
+        duration: 0.42,
+        ease: "power2.in"
+      }, "+=0.3");
 
       tl.to(".ray", {
         opacity: 0,
@@ -1729,26 +2155,72 @@
         duration: 0.8,
         stagger: 0.01,
         ease: "power2.out"
-      }, "-=0.35");
+      }, "<0.05");
 
       tl.add(function () {
-        gsap.to(stickerCard, {
-          y: -16,
-          duration: 1.4,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
+        gsap.killTweensOf(stickerCard);
+        gsap.killTweensOf(stickerShine);
+        gsap.set(stickerShine, {
+          x: "-180%",
+          opacity: 0
         });
-        loopStickerShine();
+
+        renderPackResults();
+        packResults.classList.add("is-visible");
+        albumLink.classList.add("is-visible");
+
+        gsap.set(packResults, {
+          autoAlpha: 0,
+          y: 26,
+          scale: 0.88
+        });
+
+        gsap.set(packResults.querySelectorAll(".result-card"), {
+          autoAlpha: 0,
+          y: 50,
+          scale: 0.74,
+          rotation: function (index) {
+            return index % 2 === 0 ? -5 : 5;
+          }
+        });
+
+        createConfetti();
+        createSideFireworks();
+      });
+
+      tl.to(packResults, {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.75,
+        ease: "back.out(1.35)"
+      });
+
+      tl.add(function () {
+        gsap.to(packResults.querySelectorAll(".result-card"), {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          rotation: 0,
+          duration: 0.68,
+          stagger: 0.08,
+          ease: "back.out(1.55)"
+        });
+        loopResultShines();
       });
     }
 
-    applyConfig();
+    applySticker(0);
+    preloadPackImages();
     createRays();
     resetInitialAnimationState();
     startIdlePackAnimation();
 
     packButton.addEventListener("click", openPack);
+    tapHint.addEventListener("click", function (event) {
+      event.preventDefault();
+      openPack();
+    });
   </script>
 </body>
 </html>

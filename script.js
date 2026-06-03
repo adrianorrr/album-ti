@@ -10,6 +10,7 @@ const spreadCounter = document.getElementById("spreadCounter");
 const progressDotsContainer = document.getElementById("progressDots");
 const mobileLayoutQuery = window.matchMedia("(max-width: 767px)");
 const coverUrl = `${window.location.pathname}${window.location.search}`;
+const packUrl = "./index.html";
 const albumData = window.albumTiData || {};
 const teamDefinitions = albumData.teamDefinitions || [];
 const stickerImages = albumData.stickerImages || {};
@@ -381,7 +382,7 @@ if (openAlbumButton) {
 }
 
 backToCoverButton.addEventListener("click", () => {
-  closeAlbum();
+  window.location.href = packUrl;
 });
 
 prevBtn.addEventListener("click", () => goToSpread(currentSpread - 1));
@@ -425,7 +426,7 @@ window.addEventListener("keydown", (event) => {
   }
 
   if (event.key === "Escape") {
-    closeAlbum();
+    window.location.href = packUrl;
   }
 });
 

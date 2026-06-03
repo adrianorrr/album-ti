@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Álbum da TI 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800&family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="scene-glow scene-glow-left"></div>
+    <div class="scene-glow scene-glow-right"></div>
+
+    <main class="experience">
+      <div class="stage-shell">
+        <section class="cover-stage" id="coverStage" aria-hidden="false">
+          <div class="cover-card" role="button" tabindex="0" aria-label="Capa do álbum da TI">
+            <div class="cover-noise"></div>
+            <div class="cover-header">
+              <span class="cover-badge">Coleção oficial</span>
+              <span class="cover-year">Edição 2026</span>
+            </div>
+
+            <div class="cover-body">
+              <p class="cover-kicker">Álbum de Figurinhas</p>
+              <h1>Seleção da TI</h1>
+              <div class="cover-emblem">
+                <span class="emblem-star"></span>
+                <span class="emblem-star"></span>
+                <span class="emblem-star"></span>
+                <div class="emblem-ball"></div>
+                <strong>TI</strong>
+              </div>
+
+              <div class="cover-ribbon">
+                <span>Edição especial</span>
+                <span>Rumo ao hexa da inovação</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="album-stage is-hidden" id="albumStage" aria-hidden="true">
+          <div class="topbar">
+            <button class="album-back" id="backToCover" aria-label="Rever pack novo">
+              <span></span>
+              <strong>Rever pack novo</strong>
+            </button>
+            <div class="topbar-heading">
+              <p class="eyebrow">Álbum da TI</p>
+              <h2>Coleção de pessoas</h2>
+            </div>
+          </div>
+
+          <div class="album-shell">
+            <button class="nav-button nav-prev" id="prevBtn" aria-label="Voltar página">
+              <span></span>
+            </button>
+
+            <div class="album-frame">
+              <div class="album-shadow"></div>
+              <div class="book" id="book"></div>
+            </div>
+
+            <button class="nav-button nav-next" id="nextBtn" aria-label="Avançar página">
+              <span></span>
+            </button>
+          </div>
+
+          <div class="album-footer">
+            <div class="progress-dots" id="progressDots" aria-label="Progresso do álbum"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="./data.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>

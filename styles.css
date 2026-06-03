@@ -18,7 +18,7 @@
   --transition: 720ms cubic-bezier(0.2, 0.7, 0.15, 1);
   --shadow-deep: 0 2rem 5rem rgba(0, 0, 0, 0.34);
   --shadow-soft: 0 1rem 2.5rem rgba(0, 0, 0, 0.18);
-  --nav-space: 4.6rem;
+  --nav-space: 0rem;
 }
 
 * {

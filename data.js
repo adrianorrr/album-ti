@@ -117,6 +117,26 @@
     // e cadastre pelo id da pessoa:
     // "time1-bruno": { src: "./assets/stickers/time1-bruno.jpg", alt: "Bruno" },
     // "time1-wagner": { src: "./assets/stickers/time1-wagner.gif", alt: "Wagner", type: "gif" },
+    "time1-bruno": {
+      src: "./assets/22684a6b-fd58-4520-ad41-1d55cf9ffd68.jpg",
+      alt: "Bruno",
+    },
+    "time2-gustavo": {
+      src: "./assets/pack-001-gustavo.jpg",
+      alt: "Gustavo",
+    },
+    "time3-carlos": {
+      src: "./assets/pack-001-carlos.jpg",
+      alt: "Carlos",
+    },
+    "time6-vandao": {
+      src: "./assets/pack-001-vandao.jpg",
+      alt: "Vand\u00e3o",
+    },
+    "time8-miguel": {
+      src: "./assets/pack-001-miguel.jpg",
+      alt: "Miguel",
+    },
   };
 
   function getPeople() {
