@@ -137,6 +137,23 @@
       src: "./assets/pack-001-miguel.jpg",
       alt: "Miguel",
     },
+    "time2-adriano": {
+      src: "./assets/pack002-adriano.jpg",
+      alt: "Adriano",
+    },
+    "time4-guglielmo": {
+      src: "./assets/pack002-guglielmo.jpg",
+      alt: "Guglielmo",
+    },
+    "time6-marcus": {
+      src: "./assets/pack002-marcus.mp4",
+      alt: "Marcus",
+      type: "video",
+    },
+    "time4-noel": {
+      src: "./assets/pack002-noel.jpg?v=20260619-1552",
+      alt: "Noel",
+    },
   };
 
   function getPeople() {

@@ -911,14 +911,16 @@ input {
   aspect-ratio: 4 / 4.7;
 }
 
-.photo-frame img {
+.photo-frame img,
+.photo-frame video {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: none;
 }
 
-.photo-frame.has-photo img {
+.photo-frame.has-photo img,
+.photo-frame.has-photo video {
   display: block;
 }
 

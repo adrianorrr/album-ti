@@ -178,16 +178,16 @@ function rebuildBookLayout(nextIsMobile = mobileLayoutQuery.matches) {
 }
 
 function renderMediaBadge(media) {
-  if (!media || media.type !== "gif") {
+  if (!media || !["gif", "video"].includes(media.type)) {
     return "";
   }
 
-  return '<span class="media-badge">GIF</span>';
+  return `<span class="media-badge">${media.type === "video" ? "Video" : "GIF"}</span>`;
 }
 
 function renderPhotoFrame(person, leader = false) {
   const image = stickerImages[person.id];
-  const isAnimated = image?.type === "gif";
+  const isAnimated = ["gif", "video"].includes(image?.type);
   const frameClass = leader
     ? `photo-frame leader-frame${isAnimated ? " is-animated" : ""}`
     : `photo-frame${isAnimated ? " is-animated" : ""}`;
@@ -195,10 +195,14 @@ function renderPhotoFrame(person, leader = false) {
   if (image) {
     const alt = escapeHtml(image.alt || person.name);
     const src = escapeHtml(image.src);
+    const mediaMarkup = image.type === "video"
+      ? `<video src="${src}" muted loop autoplay playsinline preload="metadata" aria-label="Video de ${alt}"></video>`
+      : `<img src="${src}" alt="${alt}" loading="lazy" />`;
+
     return `
       <div class="${frameClass} has-photo">
         ${renderMediaBadge(image)}
-        <img src="${src}" alt="${alt}" loading="lazy" />
+        ${mediaMarkup}
       </div>
     `;
   }
