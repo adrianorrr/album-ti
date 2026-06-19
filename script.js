@@ -178,11 +178,11 @@ function rebuildBookLayout(nextIsMobile = mobileLayoutQuery.matches) {
 }
 
 function renderMediaBadge(media) {
-  if (!media || !["gif", "video"].includes(media.type)) {
+  if (!media || media.type !== "gif") {
     return "";
   }
 
-  return `<span class="media-badge">${media.type === "video" ? "Video" : "GIF"}</span>`;
+  return '<span class="media-badge">GIF</span>';
 }
 
 function renderPhotoFrame(person, leader = false) {
